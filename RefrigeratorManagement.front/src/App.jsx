@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes,  } from 'react-router-dom'
 import { Home } from 'pages/Home'
 import { FoodAdd } from 'pages/FoodAdd'
 import { FoodEdit } from 'pages/FoodEdit'
-import { FoodList } from 'pages/FoodList'
+import { FoodList } from 'component/FoodList'
 import { Login } from 'pages/Login'
 
 
