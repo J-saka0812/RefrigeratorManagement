@@ -4,6 +4,7 @@ import "./styles/StatsCards.css";
 
 export function StatsCards() {
   
+  // データ取得用のオブジェクト
   const [stats, setStats] = useState({
     total: 0,
     expiringSoon: 0,
