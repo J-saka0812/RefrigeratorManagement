@@ -1,27 +1,30 @@
-import { useState } from 'react'
 import './App.css'
-import { BrowserRouter, Route, Routes,  } from 'react-router-dom'
+import { Route, Routes, useLocation, } from 'react-router-dom'
 import { Home } from 'pages/Home'
 import { FoodAdd } from 'pages/FoodAdd'
 import { FoodEdit } from 'pages/FoodEdit'
-import { FoodList } from 'component/FoodList'
 import { Login } from 'pages/Login'
-
+import { ROUTES } from './const'
 
 
 function App() {
 
+  const location = useLocation();
+  const backgroundLocation = location.state?.backgroundLocation;
+
   return (
     <>
-      <BrowserRouter>
+      <Routes location={backgroundLocation || location}>
+        <Route path={ROUTES.HOME} element={ <Home /> } />
+        <Route path={ROUTES.LOGIN} element={ <Login /> } />
+      </Routes>
+
+      {backgroundLocation && (
         <Routes>
-          <Route path='/' element={ <Home /> } />
-          <Route path='/FoodADD' element={ <FoodAdd /> } />
-          <Route path='/FoodEdit' element={ <FoodEdit /> } />
-          <Route path='/FoodList' element={ <FoodList /> } />
-          <Route path='/Login' element={ <Login /> } />
+          <Route path={ROUTES.FOOD_EDIT} element={ <FoodEdit /> } />
+          <Route path={ROUTES.FOOD_ADD} element={ <FoodAdd /> } />
         </Routes>
-      </BrowserRouter>
+      )}
     </>
   )
 }
