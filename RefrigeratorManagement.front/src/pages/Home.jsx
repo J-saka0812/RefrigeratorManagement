@@ -4,14 +4,14 @@ import { SearchBarContainer } from "component/SearchBarContainer";
 import { FoodList } from "component/FoodList";
 import { useEffect, useState } from "react";
 import mockFoodData from "../data/MockFoodData";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "../const";
 
 export function Home() {
   // データ取得用のオブジェクト
   const [foods, setFoods] = useState([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingFood, setEditingFood] = useState(null);
-
-  // TODO: isEditModalOpenの詳細設計
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // データベースから食品情報を取得（モック）
 
@@ -26,16 +26,19 @@ export function Home() {
 
   const handleEdit = (foodId) => {
     const foodToEdit = foods.find((food) => food.id === foodId);
-    console.log("Edit this food:", foodToEdit);
-    setEditingFood(foodToEdit);
-    setIsEditModalOpen(true);
-    // この後、状態を使ってモーダルを開き、編集対象のデータを渡す
-    // TODO: 編集画面遷移処理実装
+    if (foodToEdit) {
+      navigate(ROUTES.FOOD_EDIT, {
+        state: {
+          food: foodToEdit,
+          backgroundLocation: location,
+        },
+      });
+    }
   };
 
   const handleDelete = (foodId) => {
     // foodId を使って、foods配列から該当する食品オブジェクトを探す
-    const foodToDelete = foods.find((food) => food.id === foodId)
+    const foodToDelete = foods.find((food) => food.id === foodId);
     if (
       foodToDelete &&
       confirm(`名前: ${foodToDelete.name}    この食品を削除しますか？`)
@@ -54,11 +57,6 @@ export function Home() {
       <StatsCards />
       <SearchBarContainer />
       <FoodList foods={foods} onEdit={handleEdit} onDelete={handleDelete} />
-
-      {/* <EditFoodModal
-              isOpen={isEditModalOpen}
-              food={editingFood}
-              onClose={() => setIsEditModalOpen(false)}> */}
     </div>
   );
 }

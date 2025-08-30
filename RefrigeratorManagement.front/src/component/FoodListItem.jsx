@@ -17,7 +17,6 @@ export function FoodListItem({ food, onEdit, onDelete }) {
 
   return (
     <div>
-      {/* <!-- 食品アイテム1 --> */}
       <div
         className="p-6 hover:bg-green-50/50 transition-colors duration-200 food-item"
         data-category={food.category}
