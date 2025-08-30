@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from "react";
 import { FunctionButton } from "./FunctionButton";
-import { classes } from "./styles/FoodListItem.module.css";
+import classes from "./styles/FoodListItem.module.css";
 
-export function FoodListItem({food, }) {
-  
-
-  const deleteFood = () => {
-    if (confirm("この食品を削除しますか？")) {
-      alert(`食品を削除しました (ID: ${foodId})`);
-      // 実際のアプリでは削除処理を実行
-    }
+export function FoodListItem({ food, onEdit, onDelete }) {
+  const calculateDaysLeft = (expiryDate) => {
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    // 時刻をリセットして日付のみで比較
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
-  // TODO
-  // editFoodの処理を作成
-  // かくButtonのclassName設定
-
-  const editFood = (foodId) => {
-
-  }
+  const daysLeft = calculateDaysLeft(food.expiryDate);
 
   return (
     <div>
@@ -30,21 +25,40 @@ export function FoodListItem({food, }) {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="bg-gradient-to-br from-orange-100 to-yellow-100 w-16 h-16 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-3xl">🥕</span>
+            <div className="bg-gradient-to-br from-pink-200 to-rose-300 w-16 h-16 rounded-full flex items-center justify-center shadow-md">
+              <span className="text-3xl">{food.icon}</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">にんじん</h3>
-              <p className="text-sm text-gray-600">カテゴリ: 野菜</p>
-              <p className="text-sm text-gray-600">数量: 3本</p>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {food.name}
+              </h3>
+              <p className="text-sm text-gray-600">{food.category}</p>
+              <p className="text-sm text-gray-600">
+                {food.quantity}
+                {food.unit}
+              </p>
               <p className="text-sm text-green-600 font-medium">
-                賞味期限: 2024/01/15 (あと5日)
+                {`賞味期限: ${food.expiryDate} (あと ${daysLeft}日)`}
               </p>
             </div>
           </div>
           <div className="flex space-x-2">
-            <FunctionButton onclick={editFood(mockFoodData)} className={classes.editButton} />
-            <FunctionButton onclick={deleteFood} className={classes.deleteButton}/>
+            <FunctionButton
+              onClick={() => {
+                onEdit(food.id);
+              }}
+              className={classes.editButton}
+            >
+              編集
+            </FunctionButton>
+            <FunctionButton
+              onClick={() => {
+                onDelete(food.id);
+              }}
+              className={classes.deleteButton}
+            >
+              削除
+            </FunctionButton>
           </div>
         </div>
       </div>
