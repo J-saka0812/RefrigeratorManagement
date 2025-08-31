@@ -1,11 +1,9 @@
 import React from "react";
 
-export function FunctionButton({ className, onClick, children }) {
+export function FunctionButton({ className, onClick, children, type }) {
   return (
-    <div>
-      <button onClick={onClick} className={className}>
-        {children}
-      </button>
-    </div>
+    <button type={type} onClick={onClick} className={className}>
+      {children}
+    </button>
   );
 }
