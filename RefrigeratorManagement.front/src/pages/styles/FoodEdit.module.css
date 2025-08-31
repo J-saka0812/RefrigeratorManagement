@@ -25,9 +25,12 @@
     height: 100%;
     max-height: 90vh;
     overflow-y: auto;
-    transition-property: all;
-    transition-duration: 300ms;
-    /* transformクラスはReact側で動的に適用することが多いため、ここでは省略 */
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+}
+
+.visible {
+    transform: translateX(0);
 }
 
 /* --- ヘッダー --- */
