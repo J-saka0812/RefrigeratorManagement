@@ -223,7 +223,6 @@ export function FoodEdit() {
               </FunctionButton>
               <FunctionButton
                 type="submit"
-                onClick={submitEditFood}
                 className={`${classes.button} ${classes.buttonSubmit}`}
               >
                 更新する
