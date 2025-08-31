@@ -43,6 +43,7 @@ export function FoodListItem({ food, onEdit, onDelete }) {
           </div>
           <div className="flex space-x-2">
             <FunctionButton
+              type="button"
               onClick={() => {
                 onEdit(food.id);
               }}
@@ -51,6 +52,7 @@ export function FoodListItem({ food, onEdit, onDelete }) {
               編集
             </FunctionButton>
             <FunctionButton
+              type="button"
               onClick={() => {
                 onDelete(food.id);
               }}
