@@ -36,6 +36,12 @@ export function Home() {
     }
   };
 
+  const handleAdd = () => {
+    navigate(ROUTES.FOOD_ADD, {
+      state: { backgroundLocation: location },
+    });
+  };
+
   const handleDelete = (foodId) => {
     // foodId を使って、foods配列から該当する食品オブジェクトを探す
     const foodToDelete = foods.find((food) => food.id === foodId);
@@ -55,7 +61,7 @@ export function Home() {
     <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-3">
       <Header />
       <StatsCards />
-      <SearchBarContainer />
+      <SearchBarContainer onAdd={handleAdd} />
       <FoodList foods={foods} onEdit={handleEdit} onDelete={handleDelete} />
     </div>
   );
