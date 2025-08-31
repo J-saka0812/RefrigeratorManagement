@@ -15,7 +15,7 @@ export function SearchBarContainer({ onAdd }) {
             <CategoryFilter />
             {/* <!-- 食品追加ボタン --> */}
             <FunctionButton
-              onClick={() => onAdd()}
+              onClick={onAdd}
               type="button"
               className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
             >

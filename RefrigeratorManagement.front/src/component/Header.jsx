@@ -14,10 +14,10 @@ export function Header() {
   }, []);
 
   
-  // useEffect(() => {                                                                                                                 
-  // データベースからの数量取得                                                                                                   
-  // fetch('api/userData')                                                                                                        
-  // .then(res => re.json())                                                                                                      
+  // useEffect(() => {                               
+  // データベースからの数量取得                            
+  // fetch('api/userData')                                 
+  // .then(res => re.json())              
   // .then(data => setUser(user));
   // }
 

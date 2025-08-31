@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import classes from "./styles/FoodEdit.module.css"; // CSSモジュールをインポート
-import { useLocation, useNavigate } from "react-router-dom";
-import { FunctionButton } from "component/FunctionButton";
-import { ROUTES } from "../const";
+import { useNavigate } from "react-router-dom";
 
-export function FoodAdd() {
-  const location = useLocation();
+export function FoodAdd({ onAdd }) {
   const navigate = useNavigate();
-
-  const { backgroundLocation } = location.state || {};
-  const [isShown, setIsShown] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -18,52 +12,36 @@ export function FoodAdd() {
     unit: "",
     expiryDate: "",
     memo: "",
+    icon: "",
   });
 
   useEffect(() => {
-    setIsVisible(true);
-  }, [backgroundLocation]);
+    // わずかな遅延を入れてから表示アニメーションを開始
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleInputChange = (event) => {
-    // ここでのevent.target.nameはすべてのinputに割り当てられているname属性の中身("name"や"category")
-    // そこに入力した内容value(formDataのname: やcategory: に入っている値)
-    // setFormDataはFoodEditに遷移したときにfoodとしてstateで渡されているのでそこに入っていた値
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const submitAddFood = (event) => {
     event.preventDefault();
-    // フォーム送信ロジック
-    console.log("Updated Food Data:", formData);
-    setIsShown(true);
+    onAdd(formData);
+    setIsVisible(false);
+    setTimeout(() => navigate(-1), 300);
   };
 
-  useEffect(() => {
-    if (isShown) {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => navigate(ROUTES.HOME), 300); // Animation duration
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isShown, navigate]);
-
   const handleCancel = () => {
-    // navigate(-1) → ブラウザの「戻る」と同じ
-    // キャンセルボタンが押されたら前の画面に戻す
     setIsVisible(false);
-    setTimeout(() => navigate(-1), 300); // Animation duration
+    setTimeout(() => navigate(-1), 300);
   };
 
   return (
     <div>
-      <div id="editFoodPopup" className={classes.popupOverlay}>
-        <div
-          className={`${classes.popupContent} ${
-            isVisible ? classes.visible : ""
-          }`}
-        >
+      <div id="addFoodPopup" className={classes.popupOverlay}>
+        <div className={`${classes.popupContent} ${isVisible ? classes.visible : ""}`}>
           <div className={classes.header}>
             <div className={classes.headerTitleGroup}>
               <div className={classes.headerIcon}>
@@ -76,18 +54,15 @@ export function FoodAdd() {
             </button>
           </div>
 
-                    <form
-            id="addFoodForm"
-            onSubmit={submitAddFood}
-            className={classes.form}
-          >
+          <form id="addFoodForm" onSubmit={submitAddFood} className={classes.form}>
+            {/* 食品名 */}
             <div>
-              <label htmlFor="editFoodName" className={classes.formLabel}>
+              <label htmlFor="addFoodName" className={classes.formLabel}>
                 食品名 <span className={classes.requiredMark}>*</span>
               </label>
               <input
                 type="text"
-                id="editFoodName"
+                id="addFoodName"
                 name="name"
                 className={classes.formInput}
                 placeholder="例: にんじん"
@@ -97,12 +72,13 @@ export function FoodAdd() {
               />
             </div>
 
+            {/* カテゴリ */}
             <div>
-              <label htmlFor="editCategory" className={classes.formLabel}>
+              <label htmlFor="addCategory" className={classes.formLabel}>
                 カテゴリ <span className={classes.requiredMark}>*</span>
               </label>
               <select
-                id="editCategory"
+                id="addCategory"
                 name="category"
                 className={classes.formSelect}
                 required
@@ -110,7 +86,7 @@ export function FoodAdd() {
                 onChange={handleInputChange}
               >
                 <option value="">カテゴリを選択</option>
-                <option value="野菜">🥕 野菜</option>
+                <option value="野菜">🥬 野菜</option>
                 <option value="肉類">🍗 肉類</option>
                 <option value="魚類">🐟 魚類</option>
                 <option value="乳製品">🥛 乳製品</option>
@@ -119,14 +95,15 @@ export function FoodAdd() {
               </select>
             </div>
 
+            {/* 数量と単位 */}
             <div className={classes.inputGrid}>
               <div>
-                <label htmlFor="editQuantity" className={classes.formLabel}>
+                <label htmlFor="addQuantity" className={classes.formLabel}>
                   数量 <span className={classes.requiredMark}>*</span>
                 </label>
                 <input
                   type="number"
-                  id="editQuantity"
+                  id="addQuantity"
                   name="quantity"
                   min="0.1"
                   step="0.1"
@@ -138,11 +115,11 @@ export function FoodAdd() {
                 />
               </div>
               <div>
-                <label htmlFor="editUnit" className={classes.formLabel}>
+                <label htmlFor="addUnit" className={classes.formLabel}>
                   単位 <span className={classes.requiredMark}>*</span>
                 </label>
                 <select
-                  id="editUnit"
+                  id="addUnit"
                   name="unit"
                   className={classes.formSelect}
                   required
@@ -163,13 +140,14 @@ export function FoodAdd() {
               </div>
             </div>
 
+            {/* 賞味期限 */}
             <div>
-              <label htmlFor="editExpiryDate" className={classes.formLabel}>
+              <label htmlFor="addExpiryDate" className={classes.formLabel}>
                 賞味期限 <span className={classes.requiredMark}>*</span>
               </label>
               <input
                 type="date"
-                id="editExpiryDate"
+                id="addExpiryDate"
                 name="expiryDate"
                 className={classes.formInput}
                 required
@@ -178,12 +156,13 @@ export function FoodAdd() {
               />
             </div>
 
+            {/* メモ */}
             <div>
-              <label htmlFor="editMemo" className={classes.formLabel}>
+              <label htmlFor="addMemo" className={classes.formLabel}>
                 メモ（任意）
               </label>
               <textarea
-                id="editMemo"
+                id="addMemo"
                 name="memo"
                 rows="3"
                 className={classes.formTextarea}
@@ -193,28 +172,18 @@ export function FoodAdd() {
               ></textarea>
             </div>
 
-            {isShown && (
-              <div id="editSuccessMessage" className={classes.successMessage}>
-                <span>✅</span>
-                <span>食品を追加しました！</span>
-              </div>
-            )}
-
+            {/* ボタン */}
             <div className={classes.buttonGroup}>
-              <FunctionButton
+              <button
                 type="button"
                 onClick={handleCancel}
                 className={`${classes.button} ${classes.buttonCancel}`}
               >
                 キャンセル
-              </FunctionButton>
-              <FunctionButton
-                type="submit"
-                className={`${classes.button} ${classes.buttonSubmit}`}
-              >
+              </button>
+              <button type="submit" className={`${classes.button} ${classes.buttonSubmit}`}>
                 追加する
-              </FunctionButton>
-              {/* TODO: 追加ボタンのロジック確認 */}
+              </button>
             </div>
           </form>
         </div>

@@ -1,4 +1,3 @@
-
 import classes from "./styles/FoodList.module.css";
 import { FoodListItem } from "./FoodListItem";
 
