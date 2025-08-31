@@ -16,9 +16,9 @@ export function Header() {
   
   // useEffect(() => {                                                                                                                 
   // データベースからの数量取得                                                                                                   
-  // fetch('api/userName')                                                                                                        
+  // fetch('api/userData')                                                                                                        
   // .then(res => re.json())                                                                                                      
-  // .then(data => setStats(data));
+  // .then(data => setUser(user));
   // }
 
   return (
