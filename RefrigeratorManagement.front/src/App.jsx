@@ -1,17 +1,18 @@
-import './App.css'
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { Home } from 'pages/Home'
-import { FoodAdd } from 'pages/FoodAdd'
-import { FoodEdit } from 'pages/FoodEdit'
-import { Login } from 'pages/Login'
-import { CATEGORY_ICONS, ROUTES } from './const'
-import { useEffect, useState } from 'react'
-import mockFoodData from './data/MockFoodData'
+import "./App.css";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { Home } from "pages/Home";
+import { FoodAdd } from "pages/FoodAdd";
+import { FoodEdit } from "pages/FoodEdit";
+import { Login } from "pages/Login";
+import { CATEGORY_ICONS, ROUTES } from "./const";
+import { useEffect, useState } from "react";
+import mockFoodData from "./data/MockFoodData";
 
 function App() {
   const [foods, setFoods] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState(""); // 検索キーワード用のstate
+  const [categorizeKeyword, setCategorizeKeyword] = useState("");
   const location = useLocation();
-  const navigate = useNavigate();
   const backgroundLocation = location.state?.backgroundLocation;
 
   useEffect(() => {
@@ -29,44 +30,64 @@ function App() {
 
   // 食品編集処理
   const handleEditFood = (editedFood) => {
-    setFoods(foods.map(food => food.id === editedFood.id ? editedFood : food));
+    setFoods(
+      foods.map((food) => (food.id === editedFood.id ? editedFood : food))
+    );
   };
 
   // 食品削除処理
   const handleDeleteFood = (foodId) => {
-    setFoods(foods.filter(food => food.id !== foodId));
+    setFoods(foods.filter((food) => food.id !== foodId));
   };
 
+  // 検索キーワードを更新する処理
+  const handleSearchFood = (keyword) => {
+    setSearchKeyword(keyword);
+  };
+
+  // カテゴリーを更新する処理
+  const handleCategorizeFood = (category) => {
+    setCategorizeKeyword(category);
+  };
+
+  // 表示する食品をフィルタリング
+  const filteredFoods = foods.filter((food) => {
+    const matchSearch = food.name.includes(searchKeyword);
+    const matchCategorize = food.category.includes(categorizeKeyword);
+    return matchSearch && matchCategorize;
+  });
 
   return (
     <>
       <Routes location={backgroundLocation || location}>
-        <Route 
-          path={ROUTES.HOME} 
+        <Route
+          path={ROUTES.HOME}
           element={
-            <Home 
-              foods={foods} 
-              onDelete={handleDeleteFood} 
+            <Home
+              foods={filteredFoods} // フィルタリング後のfoodsを渡す
+              onDelete={handleDeleteFood}
+              onSearch={handleSearchFood}
+              onCategorize={handleCategorizeFood}
             />
-          } 
+          }
         />
-        <Route path={ROUTES.LOGIN} element={ <Login /> } />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
       </Routes>
 
       {backgroundLocation && (
         <Routes>
-          <Route 
-            path={ROUTES.FOOD_EDIT} 
-            element={<FoodEdit onEdit={handleEditFood} />} 
+          <Route
+            path={ROUTES.FOOD_EDIT}
+            element={<FoodEdit onEdit={handleEditFood} />}
           />
-          <Route 
-            path={ROUTES.FOOD_ADD} 
-            element={<FoodAdd onAdd={handleAddFood}/>} 
+          <Route
+            path={ROUTES.FOOD_ADD}
+            element={<FoodAdd onAdd={handleAddFood} />}
           />
         </Routes>
       )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

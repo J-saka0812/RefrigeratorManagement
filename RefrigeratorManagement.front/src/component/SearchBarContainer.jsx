@@ -2,7 +2,7 @@ import { CategoryFilter } from "./CategoryFilter";
 import { FunctionButton } from "./FunctionButton";
 import { SearchBar } from "./SearchBar";
 
-export function SearchBarContainer({ onAdd }) {
+export function SearchBarContainer({ onAdd, onSearch, onCategorize }) {
   return (
     <div>
       {/* <!-- 検索・フィルター・追加ボタン --> */}
@@ -10,9 +10,9 @@ export function SearchBarContainer({ onAdd }) {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="flex flex-col md:flex-row gap-4 flex-1">
             {/* <!-- 検索バー --> */}
-            <SearchBar />
+            <SearchBar onSearch={onSearch} />
             {/* <!-- カテゴリフィルター --> */}
-            <CategoryFilter />
+            <CategoryFilter onCategorize={onCategorize} />
             {/* <!-- 食品追加ボタン --> */}
             <FunctionButton
               onClick={onAdd}
