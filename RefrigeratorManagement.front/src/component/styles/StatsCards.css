@@ -60,3 +60,11 @@
   align-items: center; /* items-center */
   justify-content: center; /* justify-center */
 }
+
+.stats-card-container{
+  display: grid;                 /* grid レイアウトにする */
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 初期は1列 */
+  gap: 1rem;                     /* 各セルの間隔 16px */
+  margin-bottom: 1.5rem;         /* 下に 24px の余白 */
+  margin-top: 1.25rem;           /* 上に 20px の余白 */
+}
