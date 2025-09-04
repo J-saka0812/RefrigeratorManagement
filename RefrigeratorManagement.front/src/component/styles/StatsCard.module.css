@@ -1,11 +1,11 @@
-.total .value-text {
+.value-text {
   font-size: 1.875rem; /* text-3xl */
   line-height: 2.25rem; /* text-3xl のデフォルト line-height */
   font-weight: 700; /* font-bold */
   color: rgb(8, 162, 90);
 }
 
-.total .icon-container {
+.icon-container {
   background-image: linear-gradient(
     to bottom right,
     #dcfce7,
@@ -19,14 +19,14 @@
   justify-content: center; /* justify-center */
 }
 
-.expiringSoon .value-text {
+.value-text {
   font-size: 1.875rem; /* text-3xl */
   line-height: 2.25rem; /* text-3xl のデフォルト line-height */
   font-weight: 700; /* font-bold */
   color: #f97316; /* text-orange-500 */
 }
 
-.expiringSoon .icon-container {
+.icon-container {
   background-image: linear-gradient(
     to bottom right,
     #ffedd5,
@@ -40,14 +40,14 @@
   justify-content: center; /* justify-center */
 }
 
-.expired .value-text {
+.value-text {
   font-size: 1.875rem; /* text-3xl */
   line-height: 2.25rem; /* Tailwindのtext-3xlに対応 */
   font-weight: 700; /* font-bold */
   color: #ef4444; /* text-red-500 */
 }
 
-.expired .icon-container {
+.icon-container {
   background-image: linear-gradient(
     to bottom right,
     #fee2e2,
@@ -59,12 +59,4 @@
   display: flex; /* flex */
   align-items: center; /* items-center */
   justify-content: center; /* justify-center */
-}
-
-.stats-card-container{
-  display: grid;                 /* grid レイアウトにする */
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 初期は1列 */
-  gap: 1rem;                     /* 各セルの間隔 16px */
-  margin-bottom: 1.5rem;         /* 下に 24px の余白 */
-  margin-top: 1.25rem;           /* 上に 20px の余白 */
 }

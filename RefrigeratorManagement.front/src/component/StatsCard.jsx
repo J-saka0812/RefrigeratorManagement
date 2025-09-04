@@ -1,4 +1,5 @@
 import React from 'react';
+import "./styles/StatsCard.module.css"
 
 export function StatsCard({ className, label, value, icon }) {
   return (
