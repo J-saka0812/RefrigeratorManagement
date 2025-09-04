@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StatsCard } from "./StatsCard";
-import "./styles/StatsCards.css";
 
 export function StatsCards() {
   
