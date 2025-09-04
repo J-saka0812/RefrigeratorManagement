@@ -2,6 +2,7 @@ import { FunctionButton } from "./FunctionButton";
 import classes from "./styles/FoodListItem.module.css";
 
 export function FoodListItem({ food, onEdit, onDelete }) {
+  
   const calculateDaysLeft = (expiryDate) => {
     const today = new Date();
     const expiry = new Date(expiryDate);
