@@ -1,11 +1,23 @@
+import { ROUTES } from "../const";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 export function Login() {
   const [isLoginView, setIsLoginView] = useState(true);
+  const [loginUser, setLoginUser] = useState({});
+  const navigate = useNavigate();
 
   const loginForm = () => {
     const handleLogin = (event) => {
         event.preventDefault();
+
+        navigate(ROUTES.HOME,{
+          state: {
+            user: loginUser,
+          }
+        })
+
     }
     // TODO: ログイン画面のHTML要素整理
     return (
