@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import classes from "./styles/FoodEdit.module.css"; // CSSモジュールをインポート
 import { useLocation, useNavigate } from "react-router-dom";
+import { CategoryFilter } from "component/CategoryFilter";
 
 export function FoodEdit({ onEdit }) {
   const location = useLocation();
@@ -44,11 +45,13 @@ export function FoodEdit({ onEdit }) {
     // そこに入力した内容value(formDataのname: やcategory: に入っている値)
     // setFormDataはFoodEditに遷移したときにfoodとしてstateで渡されているのでそこに入っていた値
     const { name, value } = event.target;
+    const today = new Date().toISOString().split()
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const submitEditFood = (event) => {
     event.preventDefault();
+    
     onEdit(formData); // App.jsxのhandleEditFoodを呼び出す
     setIsVisible(false); // 閉じるアニメーションを開始
     setTimeout(() => navigate(-1), 300); // アニメーション後に遷移
@@ -95,6 +98,8 @@ export function FoodEdit({ onEdit }) {
                 className={classes.formInput}
                 placeholder="例: にんじん"
                 required
+                pattern=".*[A-Za-zぁ-んァ-ヶ一-龥].*"
+                title="文字を1文字以上含めてください"
                 value={formData.name}
                 onChange={handleInputChange}
               />
@@ -105,6 +110,12 @@ export function FoodEdit({ onEdit }) {
               <label htmlFor="editCategory" className={classes.formLabel}>
                 カテゴリ <span className={classes.requiredMark}>*</span>
               </label>
+              {/* TODO: カテゴリフィルターのコンポーネントを、流用できるように修正 */}
+              {/* <CategoryFilter
+              value={formData.category}
+              onChange={handleInputChange}
+              className={classes.formSelect}
+              /> */}
               <select
                 id="editCategory"
                 name="category"
@@ -123,6 +134,7 @@ export function FoodEdit({ onEdit }) {
               </select>
             </div>
 
+{/* TODO: 数量と単位をコンポーネント化 */}
             {/* 数量と単位 */}
             <div className={classes.inputGrid}>
               <div>
@@ -133,8 +145,8 @@ export function FoodEdit({ onEdit }) {
                   type="number"
                   id="editQuantity"
                   name="quantity"
-                  min="0.1"
-                  step="0.1"
+                  min="0.5"
+                  step="0.5"
                   className={classes.formInput}
                   placeholder="1"
                   required
@@ -179,6 +191,7 @@ export function FoodEdit({ onEdit }) {
                 name="expiryDate"
                 className={classes.formInput}
                 required
+                min={new Date().toISOString().split("T")[0]}
                 value={formData.expiryDate}
                 onChange={handleInputChange}
               />
