@@ -17,12 +17,12 @@ export function CategoryFilter({onCategorize}) {
       onChange={handleChange}
     >
       <option value="">全カテゴリ</option>
-      <option value="野菜">野菜</option>
-      <option value="肉類">肉類</option>
-      <option value="魚類">魚類</option>
-      <option value="乳製品">乳製品</option>
-      <option value="調味料">調味料</option>
-      <option value="その他">その他</option>
+      <option value="野菜">🥬 野菜</option>
+      <option value="肉類">🍗 肉類</option>
+      <option value="魚類">🐟 魚類</option>
+      <option value="乳製品">🥛 乳製品</option>
+      <option value="調味料">🧂 調味料</option>
+      <option value="その他">📦 その他</option>
     </select>
   );
 }
