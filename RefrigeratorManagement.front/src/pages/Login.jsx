@@ -8,6 +8,31 @@ import { LoginFooter } from "component/LoginFooter";
 import { appleIcon } from "../../public/favicon.svg";
 
 export function Login() {
+  // TODO: リファクタリング構成(動いたら変更)
+  //   // フォームデータをまとめる
+  // const [formData, setFormData] = useState({
+  //   userMail: "",
+  //   userPassword: "",
+  //   confirmPassword: ""
+  // });
+
+  // // エラー関連をまとめる
+  // const [errorState, setErrorState] = useState({
+  //   fieldMessage: "",
+  //   error: "",
+  //   errors: []
+  // });
+
+  // // UI状態をまとめる
+  // const [uiState, setUiState] = useState({
+  //   isLoginView: true,
+  //   showForgotPassword: false,
+  //   isMessageVisible: false,
+  //   isVisible: false,
+  //   successLogin: false,
+  //   loginMessage: "ログイン"
+  // });
+
   const [isLoginView, setIsLoginView] = useState(true);
   const [FieldMessage, setFieldMessage] = useState("");
   const [successLogin, setSuccessLogin] = useState(false);
@@ -15,8 +40,12 @@ export function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [userMail, setUserMail] = useState("");
   const [userPassword, setUserPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("ログイン");
   const [isVisible, setIsVisible] = useState(false);
+  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
+  // API処理用
   const [loginValue, setLoginValue] = useState({
     mail: "",
     password: "",
@@ -24,14 +53,51 @@ export function Login() {
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
+  // 初回画面起動時動作
+  useEffect(() => {
+    setUserMail("");
+    setUserPassword("");
+  }, []);
+
   const handleGetMail = (event) => {
     const mailAddress = event.target.value;
     setUserMail(mailAddress);
   };
 
+  //パスワード&メールバリデーション
+  // TODO: HTML側のonChange確認
+  const validateInput = (event) => {
+    const newErrors = [];
+    const inputValue = event.target.value;
+
+    if (
+      event.target.name == "password" ||
+      event.target.name == "confirmPassword"
+    ) {
+      if (event.target.value.length < 6) newErrors.push("6文字以上");
+      if (!/[a-zA-Z]/.test(inputValue)) newErrors.push("英字を含む");
+      if (!/\d/.test(inputValue)) newErrors.push("数字を含む");
+    } else if (event.target.name == "email") {
+      if (!inputValue) {
+        errors.push("メールアドレスを入力してください");
+      } else {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(inputValue)) {
+          newErrors.push("正しいメールアドレス形式で入力してください");
+        }
+      }
+    }
+    setErrors(newErrors);
+  };
+
   const handleGetPassword = (event) => {
     const password = event.target.value;
-    setUserPassword(password);
+    if (event.target.name == "password") {
+      setUserPassword(password);
+      validateInput(password);
+    } else if (event.target.name == "confirmPassword") {
+      setConfirmPassword(password);
+    }
   };
 
   // メール、パスワード入力ごとにstate変数変更
@@ -43,18 +109,113 @@ export function Login() {
     setLoginValue(userLoginValue);
   }, [userMail, userPassword]);
 
-  // 初回画面起動時動作
-  useEffect(() => {
-    setUserMail("");
-    setUserPassword("");
-  }, []);
-
   // パスワード表示/非表示切り替え
   const togglePassword = () => {
     if (inputRef.current) {
       inputRef.current.type = isVisible ? "password" : "text";
       setIsVisible(!isVisible);
     }
+  };
+
+  // APIからのデータ取得
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setError("");
+    setErrors([]);
+    // const handleLogin = async (event, token) => {
+    //   event.preventDefault();
+    if (userPassword !== confirmPassword) {
+      setError("パスワードが一致しません");
+      return;
+    }
+
+    if (!validatePassword(userPassword)) {
+      setError("パスワードの要件を満たしていません");
+      return;
+    }
+
+    if (!validateMail)
+      // try {
+      //   const res = await fetch("api/stats", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       'Authorization': `Bearer ${token}`
+      //     },
+      //     //  Cookie をやり取りする場合は必須
+      //     credentials: "include",
+      //     body: JSON.stringify(loginValue),
+      //   });
+
+      // if (!res.ok) {
+      //   throw new Error("メールアドレスまたはパスワードが正しくありません");
+      // }
+      // const data = await res.json();
+
+      setTimeout(() => {
+        if (
+          userMail == "demo@example.com" &&
+          password == "password123" &&
+          confirmPassword == "password123"
+        ) {
+          setLoginMessage("ログイン中‥");
+          console.log("サーバーレスポンス:", data);
+          setFieldMessage("ログイン中‥");
+          setSuccessLogin(true);
+          setIsMessageVisible(true);
+          navigate(ROUTES_HOME);
+        } else {
+          console.error(error);
+          setFieldMessage("ログイン認証に失敗しました");
+          setIsMessageVisible(true);
+          setUserMail("");
+          setUserPassword("");
+        }
+      }, 1500);
+
+    return () => clearTimeout(timer);
+    // TODO: API処理用
+    // setLoginMessage("ログイン中‥");
+    // console.log("サーバーレスポンス:", data);
+    // setFieldMessage("ログイン中‥");
+    // setSuccessLogin(true);
+    // setIsMessageVisible(true);
+    // const timer = setTimeout(() => {
+    //   navigate(ROUTES.HOME, {
+    //     state: data,
+    //   });
+    // }, 1500);
+
+    // return () => clearTimeout(timer);
+    //  トークンは JS から見えない
+    // → サーバーから Set-Cookie された Cookie がブラウザに保存される
+    // → 以降の fetch でも credentials: "include" を指定すると自動送信される
+    //   } catch (error) {
+    //     const timer = setTimeout(() => {
+    //       console.error(error);
+    //       setFieldMessage("ログイン認証に失敗しました");
+    //       setIsMessageVisible(true);
+    //     }, 1500);
+    //     setUserMail("");
+    //     setUserPassword("");
+    //     return () => clearTimeout(timer);
+    //   }
+  };
+
+  // アカウント登録画面を表示
+  const handleAddOn = (event) => {
+    event.preventDefault();
+    setIsLoginView(false);
+  };
+
+  //  パスワード忘れ画面を表示
+  const handleShowForgotPassword = () => {
+    setShowForgotPassword(true);
+  };
+
+  //  パスワード忘れ画面を閉じる
+  const closeForgotPassword = () => {
+    setShowForgotPassword(false);
   };
 
   // ログイン成功か失敗のメッセージフィールド
@@ -80,84 +241,24 @@ export function Login() {
         </MessageField>
       );
     }
-  }, [isMessageVisible]);
+  }, [isMessageVisible, successLogin]);
 
-  // APIからのデータ取得
-  const handleLogin = async (event) => {
+  // パスワード再設定
+  const handleResetPassword = (event) => {
     event.preventDefault();
-
-    try {
-      const res = await fetch("api/stats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        //  Cookie をやり取りする場合は必須
-        credentials: "include",
-        body: JSON.stringify(loginValue),
-      });
-
-      if (!res.ok) {
-        throw new Error("メールアドレスまたはパスワードが正しくありません");
-      }
-      const data = await res.json();
-
-      setLoginMessage("ログイン中‥");
-      console.log("サーバーレスポンス:", data);
-      setFieldMessage("ログイン中‥");
-      setSuccessLogin(true);
-      setIsMessageVisible(true);
-      const timer = setTimeout(() => {
-        navigate(ROUTES.HOME, {
-          state: data,
-        });
-      }, 1500);
-
-      return () => clearTimeout(timer);
-      //  トークンは JS から見えない
-      // → サーバーから Set-Cookie された Cookie がブラウザに保存される
-      // → 以降の fetch でも credentials: "include" を指定すると自動送信される
-    } catch (error) {
-      const timer = setTimeout(() => {
-        console.error(error);
-        setFieldMessage("ログイン認証に失敗しました");
-        setIsMessageVisible(true);
-      }, 1500);
-      setUserMail("");
-      setUserPassword("");
-      return () => clearTimeout(timer);
-    }
-  };
-
-  // アカウント登録画面を表示
-  const handleAddOn = (event) => {
-    event.preventDefault();
-    setIsLoginView(false);
-  };
-
-  //  パスワード忘れ画面を表示
-  const handleShowForgotPassword = () => {
-    setShowForgotPassword(true);
-  };
-
-  //  パスワード忘れ画面を閉じる
-  const closeForgotPassword = () => {
-    setShowForgotPassword(false);
-  };
-
-  const handleResetEmail = (event) => {
-    event.preventDefault();
+    setError("");
+    setErrors([]);
 
     const formData = new FormData(event.target);
     const email = formData.get("resetEmail");
 
     // 実際のアプリではパスワードリセットAPI呼び出し
-    alert(`${email} にパスワードリセット用のリンクを送信しました。`);
-    const timer = setTimeout(() => {
-      closeForgotPassword();
-    }, 1500);
+    // alert(`${email} にパスワードリセット用のリンクを送信しました。`);
+    // const timer = setTimeout(() => {
+    //   closeForgotPassword();
+    // }, 1500);
 
-    return () => clearTimeout(timer);
+    //   return () => clearTimeout(timer);
   };
 
   useEffect(() => {
@@ -171,11 +272,11 @@ export function Login() {
             <LoginHeader
               title="パスワードをリセット"
               icon="🔑"
-              description="登録済みのメールアドレスにリセット用のリンクを送信します"
+              description="新しいパスワードを設定してください"
             />
             <form
               id="forgotPasswordForm"
-              onsubmit={handleResetEmail}
+              onsubmit={handleResetPassword}
               className="space-y-4"
             >
               <InputField
@@ -191,6 +292,53 @@ export function Login() {
                 onChange={handleGetMail}
               />
 
+              <InputField
+                type="password"
+                id="resetpassword"
+                name="password"
+                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                placeholder="new password"
+                labelText="新しいパスワード: 6文字以上、英数字1文字以上使用してください"
+                icon="🔒"
+                value={userPassword}
+                onChange={(event) => {
+                  handleGetPassword(event.target.value);
+                  getPasswordStrength(event.target.value);
+                }}
+              >
+                <button
+                  type="button"
+                  onclick={togglePassword}
+                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  id="togglePasswordBtn"
+                >
+                  {isVisible ? "🙈" : "👁️"}
+                </button>
+              </InputField>
+              <InputField
+                type="password"
+                id="confirmResetpassword"
+                name="confirmPassword"
+                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                placeholder="もう一度入力してください"
+                labelText="パスワード確認"
+                icon="🔒"
+                value={confirmPassword}
+                onChange={(event) => {
+                  handleGetPassword(event.target.value);
+                  getPasswordStrength(event.target.value);
+                }}
+              >
+                <button
+                  type="button"
+                  onclick={togglePassword}
+                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  id="togglePasswordBtn"
+                >
+                  {isVisible ? "🙈" : "👁️"}
+                </button>
+              </InputField>
+
               <div className="flex space-x-3 pt-4">
                 <FunctionButton
                   type="button"
@@ -202,6 +350,7 @@ export function Login() {
 
                 <FunctionButton
                   type="submit"
+                  disabled={errors.length > 0}
                   className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   送信
@@ -247,18 +396,21 @@ export function Login() {
             id="password"
             name="password"
             className="w-full px-4 py-3 pl-12 pr-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-            placeholder="6文字以上、英数字1文字以上使用してください"
+            placeholder="パスワード: 6文字以上、英数字1文字以上使用してください"
             pattern="(?=.*[A-Za-z0-9]).{6,}"
             minlength="8"
             htmlFor="password"
             labelText="パスワード"
             icon="🔒"
             value={userPassword}
-            onChange={handleGetPassword}
+            onChange={(event) => {
+              handleGetPassword(event.target.value);
+              getPasswordStrength(event.target.value);
+            }}
           >
             <button
               type="button"
-              onclick={togglePassword}
+              onclick={togglePassword()}
               class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
               id="togglePasswordBtn"
             >
@@ -298,6 +450,7 @@ export function Login() {
           {/* <!-- ログインボタン --> */}
           <FunctionButton
             type="submit"
+            disabled={errors.length > 0}
             class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
             id="loginBtn"
             onClick={handleLogin}
@@ -388,41 +541,60 @@ export function Login() {
               </div>
 
               {/* <!-- パスワード --> */}
-              <div>
-                <label
-                  for="password"
-                  class="block text-sm font-medium text-gray-700 mb-2"
+              <InputField
+                type="password"
+                id="password"
+                name="password"
+                className="w-full px-4 py-3 pl-12 pr-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="6文字以上、英数字1文字以上使用してください"
+                pattern="(?=.*[A-Za-z0-9]).{6,}"
+                minlength="8"
+                htmlFor="password"
+                labelText="パスワード"
+                icon="🔒"
+                value={userPassword}
+                onChange={(event) => {
+                  handleGetPassword(event.target.value);
+                  getPasswordStrength(event.target.value);
+                }}
+              >
+                <button
+                  type="button"
+                  onclick={togglePassword}
+                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  id="togglePasswordBtn"
                 >
-                  パスワード
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="8文字以上で入力してください"
-                  required
-                  minlength="8"
-                />
-              </div>
+                  {isVisible ? "🙈" : "👁️"}
+                </button>
+              </InputField>
 
               {/* <!-- パスワード確認 --> */}
-              <div>
-                <label
-                  for="confirmPassword"
-                  class="block text-sm font-medium text-gray-700 mb-2"
+              <InputField
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="パスワードを再入力してください"
+                pattern="(?=.*[A-Za-z0-9]).{6,}"
+                minlength="8"
+                htmlFor="password"
+                labelText="パスワード確認"
+                icon="🔒"
+                value={confirmPassword}
+                onChange={(event) => {
+                  handleGetPassword(event.target.value);
+                  getPasswordStrength(event.target.value);
+                }}
+              >
+                <button
+                  type="button"
+                  onclick={togglePassword}
+                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  id="togglePasswordBtn"
                 >
-                  パスワード確認
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="パスワードを再入力してください"
-                  required
-                />
-              </div>
+                  {isVisible ? "🙈" : "👁️"}
+                </button>
+              </InputField>
 
               {/* <!-- 利用規約同意 --> */}
               <div class="flex items-start space-x-3">
