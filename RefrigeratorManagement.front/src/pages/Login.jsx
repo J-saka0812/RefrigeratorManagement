@@ -62,6 +62,10 @@ export function Login() {
     setUserPassword("");
   }, []);
 
+  const handleGetName = (event) => {
+    const name = event.target.value;
+    setUserName(name);
+  };
 
   const handleGetMail = (event) => {
     const mailAddress = event.target.value;
