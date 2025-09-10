@@ -6,6 +6,7 @@ import { LoginHeader } from "component/loginHeader";
 import { InputField } from "component/InputField";
 import { LoginFooter } from "component/LoginFooter";
 import { appleIcon } from "../../public/favicon.svg";
+import { MessageField } from "component/MessageField";
 
 export function Login() {
   // TODO: リファクタリング構成(動いたら変更)
@@ -38,11 +39,13 @@ export function Login() {
   const [successLogin, setSuccessLogin] = useState(false);
   const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [userName, setUserName] = useState("");
   const [userMail, setUserMail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("ログイン");
   const [isVisible, setIsVisible] = useState(false);
+
   const [error, setError] = useState("");
   const [errors, setErrors] = useState([]);
   // API処理用
@@ -58,6 +61,7 @@ export function Login() {
     setUserMail("");
     setUserPassword("");
   }, []);
+
 
   const handleGetMail = (event) => {
     const mailAddress = event.target.value;
@@ -120,6 +124,7 @@ export function Login() {
   // APIからのデータ取得
   const handleLogin = async (event) => {
     event.preventDefault();
+
     setError("");
     setErrors([]);
     // const handleLogin = async (event, token) => {
@@ -158,6 +163,7 @@ export function Login() {
           password == "password123" &&
           confirmPassword == "password123"
         ) {
+
           setLoginMessage("ログイン中‥");
           console.log("サーバーレスポンス:", data);
           setFieldMessage("ログイン中‥");
@@ -165,13 +171,16 @@ export function Login() {
           setIsMessageVisible(true);
           navigate(ROUTES_HOME);
         } else {
+
           console.error(error);
           setFieldMessage("ログイン認証に失敗しました");
           setIsMessageVisible(true);
+
           setUserMail("");
           setUserPassword("");
         }
       }, 1500);
+
 
     return () => clearTimeout(timer);
     // TODO: API処理用
@@ -202,6 +211,7 @@ export function Login() {
     //   }
   };
 
+
   // アカウント登録画面を表示
   const handleAddOn = (event) => {
     event.preventDefault();
@@ -217,6 +227,7 @@ export function Login() {
   const closeForgotPassword = () => {
     setShowForgotPassword(false);
   };
+
 
   // ログイン成功か失敗のメッセージフィールド
   useEffect(() => {
@@ -245,6 +256,7 @@ export function Login() {
 
   // パスワード再設定
   const handleResetPassword = (event) => {
+
     event.preventDefault();
     setError("");
     setErrors([]);
@@ -505,43 +517,37 @@ export function Login() {
             {/* <!-- 登録フォーム --> */}
             <form id="registerForm" class="space-y-6">
               {/* <!-- ユーザー名 --> */}
-              <div>
-                <label
-                  for="username"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  ユーザー名
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="例: 田中太郎"
-                  required
+                {/* TODO: ユーザーネームのインプットフィールド */}
+                {/* TODO:パスワード確認用関数作成 */}
+                
+                <InputField
+                type="text"
+                id="username"
+                name="username"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="example@email.com"
+                labelText="ユーザー名"
+                icon="✒️"
+                value={userName}
+                onChange={handleGetName}
                 />
-              </div>
-
               {/* <!-- メールアドレス --> */}
-              <div>
-                <label
-                  for="email"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  メールアドレス
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="例: tanaka@example.com"
-                  required
+              <InputField
+              type="email"
+                id="email"
+                name="email"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="example@email.com"
+                htmlFor="email"
+                labelText="メールアドレス"
+                icon="📩"
+                value={userMail}
+                onChange={handleGetMail}
                 />
-              </div>
 
               {/* <!-- パスワード --> */}
               <InputField
+
                 type="password"
                 id="password"
                 name="password"
@@ -618,12 +624,11 @@ export function Login() {
               </div>
 
               {/* <!-- 登録ボタン --> */}
-              <button
-                type="submit"
-                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                アカウントを作成
-              </button>
+              <FunctionButton
+              type="submit"
+                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                  アカウント作成
+                </FunctionButton>
             </form>
 
             {/* <!-- ログインリンク --> */}
@@ -640,15 +645,13 @@ export function Login() {
             </div>
 
             {/* <!-- 成功メッセージ（非表示） --> */}
-            <div
-              id="successMessage"
-              class="hidden mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+            <MessageField
+            id="successMassage"
+            className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+            icon="✅"
             >
-              <div class="flex items-center">
-                <span class="mr-2">✅</span>
-                <span>アカウントが正常に作成されました！</span>
-              </div>
-            </div>
+            アカウントが正常に作成されました！
+            </MessageField>
           </div>
         </div>
       </body>
