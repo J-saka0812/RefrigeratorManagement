@@ -6,6 +6,7 @@ import { LoginHeader } from "component/loginHeader";
 import { InputField } from "component/InputField";
 import { LoginFooter } from "component/LoginFooter";
 import { appleIcon } from "../../public/favicon.svg";
+import { MessageField } from "component/MessageField";
 
 export function Login() {
   const [isLoginView, setIsLoginView] = useState(true);
@@ -13,17 +14,23 @@ export function Login() {
   const [successLogin, setSuccessLogin] = useState(false);
   const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [userName, setUserName] = useState("");
   const [userMail, setUserMail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("ログイン");
   const [isVisible, setIsVisible] = useState(false);
-  const [loginValue, setLoginValue] = useState({
-    mail: "",
-    password: "",
-  });
+// API処理用
+  // const [loginValue, setLoginValue] = useState({
+  //   mail: "",
+  //   password: "",
+  // });
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
+  const handleGetName = (event) => {
+    const userName = event.target.value;
+    setUserName(userName);
+  };
   const handleGetMail = (event) => {
     const mailAddress = event.target.value;
     setUserMail(mailAddress);
@@ -85,49 +92,69 @@ export function Login() {
   // APIからのデータ取得
   const handleLogin = async (event) => {
     event.preventDefault();
+      
+        // try {
+        //   const res = await fetch("api/stats", {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     //  Cookie をやり取りする場合は必須
+        //     credentials: "include",
+        //     body: JSON.stringify(loginValue),
+        //   });
 
-    try {
-      const res = await fetch("api/stats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        //  Cookie をやり取りする場合は必須
-        credentials: "include",
-        body: JSON.stringify(loginValue),
-      });
+        //   if (!res.ok) {
+        //     throw new Error("メールアドレスまたはパスワードが正しくありません");
+        //   }
+        //   const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error("メールアドレスまたはパスワードが正しくありません");
-      }
-      const data = await res.json();
-
-      setLoginMessage("ログイン中‥");
-      console.log("サーバーレスポンス:", data);
-      setFieldMessage("ログイン中‥");
-      setSuccessLogin(true);
-      setIsMessageVisible(true);
-      const timer = setTimeout(() => {
-        navigate(ROUTES.HOME, {
-          state: data,
-        });
+      setTimeout(() => {
+        
+        if (userMail == "demo@example.com" && password == "password123") {
+          setLoginMessage("ログイン中‥");
+          console.log("サーバーレスポンス:", data);
+          setFieldMessage("ログイン中‥");
+          setSuccessLogin(true);
+          setIsMessageVisible(true);
+          navigate(ROUTES_HOME);
+        } else {
+            console.error(error);
+            setFieldMessage("ログイン認証に失敗しました");
+            setIsMessageVisible(true);
+          setUserMail("");
+          setUserPassword("");
+        }
       }, 1500);
-
       return () => clearTimeout(timer);
+    }
+      // TODO: API処理用
+      // setLoginMessage("ログイン中‥");
+      // console.log("サーバーレスポンス:", data);
+      // setFieldMessage("ログイン中‥");
+      // setSuccessLogin(true);
+      // setIsMessageVisible(true);
+      // const timer = setTimeout(() => {
+      //   navigate(ROUTES.HOME, {
+      //     state: data,
+      //   });
+      // }, 1500);
+
+      // return () => clearTimeout(timer);
       //  トークンは JS から見えない
       // → サーバーから Set-Cookie された Cookie がブラウザに保存される
       // → 以降の fetch でも credentials: "include" を指定すると自動送信される
-    } catch (error) {
-      const timer = setTimeout(() => {
-        console.error(error);
-        setFieldMessage("ログイン認証に失敗しました");
-        setIsMessageVisible(true);
-      }, 1500);
-      setUserMail("");
-      setUserPassword("");
-      return () => clearTimeout(timer);
-    }
-  };
+  //   } catch (error) {
+  //     const timer = setTimeout(() => {
+  //       console.error(error);
+  //       setFieldMessage("ログイン認証に失敗しました");
+  //       setIsMessageVisible(true);
+  //     }, 1500);
+  //     setUserMail("");
+  //     setUserPassword("");
+  //     return () => clearTimeout(timer);
+  //   }
+  // };
 
   // アカウント登録画面を表示
   const handleAddOn = (event) => {
@@ -145,6 +172,7 @@ export function Login() {
     setShowForgotPassword(false);
   };
 
+  // メールへ新しいパスワード送信
   const handleResetEmail = (event) => {
     event.preventDefault();
 
@@ -352,78 +380,66 @@ export function Login() {
             {/* <!-- 登録フォーム --> */}
             <form id="registerForm" class="space-y-6">
               {/* <!-- ユーザー名 --> */}
-              <div>
-                <label
-                  for="username"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  ユーザー名
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="例: 田中太郎"
-                  required
+                {/* TODO: ユーザーネームのインプットフィールド */}
+                {/* TODO:パスワード確認用関数作成 */}
+                
+                <InputField
+                type="text"
+                id="username"
+                name="username"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="example@email.com"
+                labelText="ユーザー名"
+                icon="✒️"
+                value={userName}
+                onChange={handleGetName}
                 />
-              </div>
-
               {/* <!-- メールアドレス --> */}
-              <div>
-                <label
-                  for="email"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  メールアドレス
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="例: tanaka@example.com"
-                  required
+              <InputField
+              type="email"
+                id="email"
+                name="email"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                placeholder="example@email.com"
+                htmlFor="email"
+                labelText="メールアドレス"
+                icon="📩"
+                value={userMail}
+                onChange={handleGetMail}
                 />
-              </div>
 
               {/* <!-- パスワード --> */}
-              <div>
-                <label
-                  for="password"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  パスワード
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="8文字以上で入力してください"
-                  required
-                  minlength="8"
-                />
-              </div>
+              <InputField
+            type="password"
+            id="password"
+            name="password"
+            className="w-full px-4 py-3 pl-12 pr-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+            placeholder="6文字以上、英数字1文字以上使用してください"
+            pattern="(?=.*[A-Za-z0-9]).{6,}"
+            minlength="8"
+            htmlFor="password"
+            labelText="パスワード"
+            icon="🔒"
+            value={userPassword}
+            onChange={handleGetMail}
+          />
 
               {/* <!-- パスワード確認 --> */}
-              <div>
-                <label
-                  for="confirmPassword"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  パスワード確認
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                  placeholder="パスワードを再入力してください"
-                  required
-                />
-              </div>
-
+              <InputField
+              type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+            placeholder="パスワードを再入力してください"
+            pattern="(?=.*[A-Za-z0-9]).{6,}"
+            minlength="8"
+            htmlFor="password"
+            labelText="パスワード確認"
+            icon="🔒"
+            value={userPassword}
+            onChange={handleGetMail}
+            />
+              
               {/* <!-- 利用規約同意 --> */}
               <div class="flex items-start space-x-3">
                 <input
@@ -446,12 +462,11 @@ export function Login() {
               </div>
 
               {/* <!-- 登録ボタン --> */}
-              <button
-                type="submit"
-                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                アカウントを作成
-              </button>
+              <FunctionButton
+              type="submit"
+                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                  アカウント作成
+                </FunctionButton>
             </form>
 
             {/* <!-- ログインリンク --> */}
@@ -468,15 +483,13 @@ export function Login() {
             </div>
 
             {/* <!-- 成功メッセージ（非表示） --> */}
-            <div
-              id="successMessage"
-              class="hidden mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+            <MessageField
+            id="successMassage"
+            className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+            icon="✅"
             >
-              <div class="flex items-center">
-                <span class="mr-2">✅</span>
-                <span>アカウントが正常に作成されました！</span>
-              </div>
-            </div>
+            アカウントが正常に作成されました！
+            </MessageField>
           </div>
         </div>
       </body>
