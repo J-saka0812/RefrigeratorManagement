@@ -38,6 +38,7 @@ export function Login() {
   const [successLogin, setSuccessLogin] = useState(false);
   const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [userName, setUserName] = useState("");
   const [userMail, setUserMail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -58,6 +59,11 @@ export function Login() {
     setUserMail("");
     setUserPassword("");
   }, []);
+
+  const handleGetName = (event) => {
+    const name = event.target.value;
+    setUserName(name);
+  };
 
   const handleGetMail = (event) => {
     const mailAddress = event.target.value;
