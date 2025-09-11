@@ -42,17 +42,13 @@ export function Login() {
   const [userName, setUserName] = useState("");
   const [userMail, setUserMail] = useState("");
   const [userPassword, setUserPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("ログイン");
   const [isVisible, setIsVisible] = useState(false);
-
+  const [isValidate, setIsValidate] = useState(false);
   const [error, setError] = useState("");
   const [errors, setErrors] = useState([]);
-  // API処理用
-  const [loginValue, setLoginValue] = useState({
-    mail: "",
-    password: "",
-  });
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
@@ -60,7 +56,10 @@ export function Login() {
   useEffect(() => {
     setUserMail("");
     setUserPassword("");
-  }, []);
+    setConfirmPassword("");
+    setError("");
+    setErrors([]);
+  }, [isLoginView]);
 
   const handleGetName = (event) => {
     const name = event.target.value;
@@ -96,6 +95,7 @@ export function Login() {
       }
     }
     setErrors(newErrors);
+    setIsValidate(errors.length == 0);
   };
 
   const handleGetPassword = (event) => {
@@ -105,6 +105,10 @@ export function Login() {
       validateInput(password);
     } else if (event.target.name == "confirmPassword") {
       setConfirmPassword(password);
+      validateInput(password);
+    } else if (event.target.name == "newPassword") {
+      setNewPassword(password);
+      validateInput(password);
     }
   };
 
@@ -114,7 +118,6 @@ export function Login() {
       mail: userMail,
       password: userPassword,
     };
-    setLoginValue(userLoginValue);
   }, [userMail, userPassword]);
 
   // パスワード表示/非表示切り替え
@@ -126,48 +129,28 @@ export function Login() {
   };
 
   // APIからのデータ取得
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
 
     setError("");
     setErrors([]);
-    // const handleLogin = async (event, token) => {
-    //   event.preventDefault();
     if (userPassword !== confirmPassword) {
       setError("パスワードが一致しません");
       return;
     }
 
-    if (!validatePassword(userPassword)) {
-      setError("パスワードの要件を満たしていません");
+    if (!isValidate) {
+      setError("要件を満たしていません");
       return;
     }
-
-    if (!validateMail)
-      // try {
-      //   const res = await fetch("api/stats", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       'Authorization': `Bearer ${token}`
-      //     },
-      //     //  Cookie をやり取りする場合は必須
-      //     credentials: "include",
-      //     body: JSON.stringify(loginValue),
-      //   });
-
-      // if (!res.ok) {
-      //   throw new Error("メールアドレスまたはパスワードが正しくありません");
-      // }
-      // const data = await res.json();
-
+    if (isValidate) {
       setTimeout(() => {
+        // TODO: loginValueの設定
         if (
           userMail == "demo@example.com" &&
-          password == "password123" &&
+          userPassword == "password123" &&
           confirmPassword == "password123"
         ) {
-
           setLoginMessage("ログイン中‥");
           console.log("サーバーレスポンス:", data);
           setFieldMessage("ログイン中‥");
@@ -175,7 +158,6 @@ export function Login() {
           setIsMessageVisible(true);
           navigate(ROUTES_HOME);
         } else {
-
           console.error(error);
           setFieldMessage("ログイン認証に失敗しました");
           setIsMessageVisible(true);
@@ -185,36 +167,9 @@ export function Login() {
         }
       }, 1500);
 
-
-    return () => clearTimeout(timer);
-    // TODO: API処理用
-    // setLoginMessage("ログイン中‥");
-    // console.log("サーバーレスポンス:", data);
-    // setFieldMessage("ログイン中‥");
-    // setSuccessLogin(true);
-    // setIsMessageVisible(true);
-    // const timer = setTimeout(() => {
-    //   navigate(ROUTES.HOME, {
-    //     state: data,
-    //   });
-    // }, 1500);
-
-    // return () => clearTimeout(timer);
-    //  トークンは JS から見えない
-    // → サーバーから Set-Cookie された Cookie がブラウザに保存される
-    // → 以降の fetch でも credentials: "include" を指定すると自動送信される
-    //   } catch (error) {
-    //     const timer = setTimeout(() => {
-    //       console.error(error);
-    //       setFieldMessage("ログイン認証に失敗しました");
-    //       setIsMessageVisible(true);
-    //     }, 1500);
-    //     setUserMail("");
-    //     setUserPassword("");
-    //     return () => clearTimeout(timer);
-    //   }
+      return () => clearTimeout(timer);
+    }
   };
-
 
   // アカウント登録画面を表示
   const handleAddOn = (event) => {
@@ -231,7 +186,6 @@ export function Login() {
   const closeForgotPassword = () => {
     setShowForgotPassword(false);
   };
-
 
   // ログイン成功か失敗のメッセージフィールド
   useEffect(() => {
@@ -259,22 +213,41 @@ export function Login() {
   }, [isMessageVisible, successLogin]);
 
   // パスワード再設定
-  const handleResetPassword = (event) => {
-
+  const handleResetPassword = async (event) => {
     event.preventDefault();
     setError("");
     setErrors([]);
 
-    const formData = new FormData(event.target);
-    const email = formData.get("resetEmail");
+    if (userPassword !== confirmPassword) {
+      setError("パスワードが一致しません");
+      return;
+    }
 
-    // 実際のアプリではパスワードリセットAPI呼び出し
-    // alert(`${email} にパスワードリセット用のリンクを送信しました。`);
-    // const timer = setTimeout(() => {
-    //   closeForgotPassword();
-    // }, 1500);
+    if (!isValidate) {
+      setError("要件を満たしていません");
+      return;
+    }
+    // const formData = new FormData(event.target);
+    // const email = formData.get("email");
 
-    //   return () => clearTimeout(timer);
+    try {
+      const res = await fetch("api/stats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        //  Cookie をやり取りする場合は必須
+        credentials: "include",
+        body: JSON.stringify(password, newPassword),
+      });
+
+      if (!res.ok) {
+        throw new Error("メールアドレスまたはパスワードが正しくありません");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -305,7 +278,10 @@ export function Login() {
                 labelText="メールアドレス"
                 icon="📩"
                 value={userMail}
-                onChange={handleGetMail}
+                onChange={(event) => {
+                  handleGetMail(event.target.value);
+                  validateInput(event.target.value);
+                }}
               />
 
               <InputField
@@ -316,10 +292,10 @@ export function Login() {
                 placeholder="new password"
                 labelText="新しいパスワード: 6文字以上、英数字1文字以上使用してください"
                 icon="🔒"
-                value={userPassword}
+                value={newPassword}
                 onChange={(event) => {
                   handleGetPassword(event.target.value);
-                  getPasswordStrength(event.target.value);
+                  validateInput(event.target.value);
                 }}
               >
                 <button
@@ -342,7 +318,7 @@ export function Login() {
                 value={confirmPassword}
                 onChange={(event) => {
                   handleGetPassword(event.target.value);
-                  getPasswordStrength(event.target.value);
+                  validateInput(event.target.value);
                 }}
               >
                 <button
@@ -366,7 +342,7 @@ export function Login() {
 
                 <FunctionButton
                   type="submit"
-                  disabled={errors.length > 0}
+                  disabled={isValidate}
                   className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   送信
@@ -390,7 +366,7 @@ export function Login() {
           />
           <form
             id="forgotPasswordForm"
-            onsubmit={handleForgotPassword}
+            onsubmit={handleShowForgotPassword}
             className="space-y-4"
           ></form>
           <LoginHeader>アカウントにログインしてください</LoginHeader>
@@ -404,7 +380,10 @@ export function Login() {
             labelText="メールアドレス"
             icon="📩"
             value={userMail}
-            onChange={handleGetMail}
+            onChange={(event) => {
+              handleGetPassword(event.target.value);
+              validateInput(event.target.value);
+            }}
           />
 
           <InputField
@@ -421,7 +400,7 @@ export function Login() {
             value={userPassword}
             onChange={(event) => {
               handleGetPassword(event.target.value);
-              getPasswordStrength(event.target.value);
+              validateInput(event.target.value);
             }}
           >
             <button
@@ -521,10 +500,7 @@ export function Login() {
             {/* <!-- 登録フォーム --> */}
             <form id="registerForm" class="space-y-6">
               {/* <!-- ユーザー名 --> */}
-                {/* TODO: ユーザーネームのインプットフィールド */}
-                {/* TODO:パスワード確認用関数作成 */}
-                
-                <InputField
+              <InputField
                 type="text"
                 id="username"
                 name="username"
@@ -534,10 +510,10 @@ export function Login() {
                 icon="✒️"
                 value={userName}
                 onChange={handleGetName}
-                />
+              />
               {/* <!-- メールアドレス --> */}
               <InputField
-              type="email"
+                type="email"
                 id="email"
                 name="email"
                 className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
@@ -547,11 +523,10 @@ export function Login() {
                 icon="📩"
                 value={userMail}
                 onChange={handleGetMail}
-                />
+              />
 
               {/* <!-- パスワード --> */}
               <InputField
-
                 type="password"
                 id="password"
                 name="password"
@@ -629,10 +604,11 @@ export function Login() {
 
               {/* <!-- 登録ボタン --> */}
               <FunctionButton
-              type="submit"
-                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                  アカウント作成
-                </FunctionButton>
+                type="submit"
+                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                アカウント作成
+              </FunctionButton>
             </form>
 
             {/* <!-- ログインリンク --> */}
@@ -650,11 +626,11 @@ export function Login() {
 
             {/* <!-- 成功メッセージ（非表示） --> */}
             <MessageField
-            id="successMassage"
-            className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
-            icon="✅"
+              id="successMassage"
+              className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+              icon="✅"
             >
-            アカウントが正常に作成されました！
+              アカウントが正常に作成されました！
             </MessageField>
           </div>
         </div>
