@@ -3,6 +3,7 @@ export const ROUTES = {
   LOGIN: "/Login",
   FOOD_EDIT: "/FoodEdit",
   FOOD_ADD: "/FoodAdd",
+  BASE_URL : '/api',
 };
 
 export const CATEGORY_ICONS = {
