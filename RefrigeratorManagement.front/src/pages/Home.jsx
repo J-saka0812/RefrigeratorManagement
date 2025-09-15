@@ -5,7 +5,7 @@ import { FoodList } from "component/FoodList";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "../const";
 
-export function Home({ foods, onDelete, onSearch, onCategorize }) {
+export function Home({ foods, onDelete, onSearch, onCategorize, mockUser }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,7 +49,7 @@ export function Home({ foods, onDelete, onSearch, onCategorize }) {
 
   return (
     <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-3">
-      <Header />
+      <Header mockUser={mockUser} />
       <StatsCards />
       <SearchBarContainer
         onAdd={handleAdd}

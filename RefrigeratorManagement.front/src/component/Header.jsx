@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { FunctionButton } from "./FunctionButton";
 import { mockUserData } from "../data/MockUserData.jsx";
 
-export function Header() {
+export function Header({mockUser}) {
   const [user, setUser] = useState({});
 
   useEffect(() => {
     // ログイン機能が実装されるまで、モックデータの最初のユーザーを表示
-    const currentUser = mockUserData[0];
+    const currentUser = mockUser;
     if (currentUser) {
       setUser(currentUser);
     }
