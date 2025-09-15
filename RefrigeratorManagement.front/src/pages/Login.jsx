@@ -1,348 +1,371 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FunctionButton } from "component/FunctionButton";
-import { ROUTES } from "../const";
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { LoginHeader } from "component/loginHeader";
 import { InputField } from "component/InputField";
+import { LoginHeader } from "component/LoginHeader";
 import { LoginFooter } from "component/LoginFooter";
-import { appleIcon } from "../../public/favicon.svg";
 import { MessageField } from "component/MessageField";
+import { mockUserData } from "../data/MockUserData";
+import { ROUTES } from "../const";
+import { DemoInfo } from "component/DemoInfo";
+import { ToggleButton } from "component/ToggleButton";
 
 export function Login() {
-  // TODO: リファクタリング構成(動いたら変更)
-  //   // フォームデータをまとめる
-  // const [formData, setFormData] = useState({
-  //   userMail: "",
-  //   userPassword: "",
-  //   confirmPassword: ""
-  // });
-
-  // // エラー関連をまとめる
-  // const [errorState, setErrorState] = useState({
-  //   fieldMessage: "",
-  //   error: "",
-  //   errors: []
-  // });
-
-  // // UI状態をまとめる
-  // const [uiState, setUiState] = useState({
-  //   isLoginView: true,
-  //   showForgotPassword: false,
-  //   isMessageVisible: false,
-  //   isVisible: false,
-  //   successLogin: false,
-  //   loginMessage: "ログイン"
-  // });
-
-  const [isLoginView, setIsLoginView] = useState(true);
-  const [FieldMessage, setFieldMessage] = useState("");
-  const [successLogin, setSuccessLogin] = useState(false);
-  const [isMessageVisible, setIsMessageVisible] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [userMail, setUserMail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loginMessage, setLoginMessage] = useState("ログイン");
-  const [isVisible, setIsVisible] = useState(false);
-  const [isValidate, setIsValidate] = useState(false);
-  const [error, setError] = useState("");
-  const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
-  const inputRef = useRef(null);
 
-  // 初回画面起動時動作
-  useEffect(() => {
-    setUserMail("");
-    setUserPassword("");
-    setConfirmPassword("");
-    setError("");
-    setErrors([]);
-  }, [isLoginView]);
+  // =========== Stateの整理 ===========
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  // バリデーションエラーをフィールドごとに管理
+  const [errors, setErrors] = useState({});
+  // フォームが送信可能かどうかの状態
+  const [isSubmittable, setIsSubmittable] = useState(false);
+  const [viewState, setViewState] = useState({
+    showForgotPassword: false,
+    isPasswordVisible: false,
+    status: "idle", // 'idle', 'loading', 'success', 'error'
+    message: "",
+    isResetPassword: false,
+  });
 
-  const handleGetName = (event) => {
-    const name = event.target.value;
-    setUserName(name);
-  };
+  // =========== バリデーションロジック ===========
+  const validate = (name, value, currentFormData) => {
+    let newErrors = { ...errors };
 
-  const handleGetMail = (event) => {
-    const mailAddress = event.target.value;
-    setUserMail(mailAddress);
-  };
-
-  //パスワード&メールバリデーション
-  // TODO: HTML側のonChange確認
-  const validateInput = (event) => {
-    const newErrors = [];
-    const inputValue = event.target.value;
-
-    if (
-      event.target.name == "password" ||
-      event.target.name == "confirmPassword"
-    ) {
-      if (event.target.value.length < 6) newErrors.push("6文字以上");
-      if (!/[a-zA-Z]/.test(inputValue)) newErrors.push("英字を含む");
-      if (!/\d/.test(inputValue)) newErrors.push("数字を含む");
-    } else if (event.target.name == "email") {
-      if (!inputValue) {
-        errors.push("メールアドレスを入力してください");
-      } else {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(inputValue)) {
-          newErrors.push("正しいメールアドレス形式で入力してください");
+    switch (name) {
+      case "username":
+        if (!value) newErrors.username = "ユーザー名を入力してください";
+        else delete newErrors.username;
+        break;
+      case "email":
+        if (!value) newErrors.email = "メールアドレスを入力してください";
+        else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+          newErrors.email = "正しいメールアドレス形式で入力してください";
+        } else delete newErrors.email;
+        break;
+      case "password":
+        if (!value) newErrors.password = "パスワードを入力してください";
+        else if (value.length < 6)
+          newErrors.password = "6文字以上で入力してください";
+        else if (!/^(?=.*[a-zA-Z])(?=.*[0-9])/.test(value)) {
+          newErrors.password = "英字と数字を両方含めてください";
+        } else delete newErrors.password;
+        // パスワード確認欄も再評価
+        if (
+          currentFormData.confirmPassword &&
+          value !== currentFormData.confirmPassword
+        ) {
+          newErrors.confirmPassword = "パスワードが一致しません";
+        } else {
+          delete newErrors.confirmPassword;
         }
-      }
+        break;
+      case "confirmPassword":
+        if (!value)
+          newErrors.confirmPassword = "パスワードを再入力してください";
+        else if (currentFormData.password !== value) {
+          newErrors.confirmPassword = "パスワードが一致しません";
+        } else delete newErrors.confirmPassword;
+        break;
+      default:
+        break;
     }
     setErrors(newErrors);
-    setIsValidate(errors.length == 0);
   };
 
-  const handleGetPassword = (event) => {
-    const password = event.target.value;
-    if (event.target.name == "password") {
-      setUserPassword(password);
-      validateInput(password);
-    } else if (event.target.name == "confirmPassword") {
-      setConfirmPassword(password);
-      validateInput(password);
-    } else if (event.target.name == "newPassword") {
-      setNewPassword(password);
-      validateInput(password);
-    }
-  };
-
-  // メール、パスワード入力ごとにstate変数変更
+  // ログインフォームの送信可否をチェックするuseEffect
   useEffect(() => {
-    const userLoginValue = {
-      mail: userMail,
-      password: userPassword,
-    };
-  }, [userMail, userPassword]);
+    const hasErrors = Object.keys(errors).length > 0;
 
-  // パスワード表示/非表示切り替え
-  const togglePassword = () => {
-    if (inputRef.current) {
-      inputRef.current.type = isVisible ? "password" : "text";
-      setIsVisible(!isVisible);
-    }
+    // 表示されているフォームに応じて、チェックするフィールドを切り替える
+    const fieldsToValidate = viewState.showForgotPassword
+      ? ["email", "password", "confirmPassword"]
+      : ["email", "password"];
+
+    const hasEmptyFields = fieldsToValidate.some((field) => !formData[field]);
+
+    setIsSubmittable(!hasErrors && !hasEmptyFields);
+  }, [formData, errors, viewState.showForgotPassword]);
+
+  // =========== イベントハンドラ ===========
+
+  /**
+   * フォームの入力値をまとめて処理する関数
+   */
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    // setFormDataのコールバック関数を使うことで、
+    // 更新が完了した直後の最新のstateにアクセスできる
+    setFormData((prev) => {
+      const updatedFormData = { ...prev, [name]: value };
+
+      // 更新後のデータを使ってバリデーションを実行
+      validate(name, value, updatedFormData);
+
+      return updatedFormData;
+    });
   };
 
-  // APIからのデータ取得
+  /**
+   * パスワードの表示/非表示を切り替える関数
+   */
+  const togglePasswordVisibility = () => {
+    setViewState((prev) => ({
+      ...prev,
+      isPasswordVisible: !prev.isPasswordVisible,
+    }));
+  };
+
+  /**
+   * ログイン処理
+   */
   const handleLogin = (event) => {
     event.preventDefault();
 
-    setError("");
-    setErrors([]);
-    if (userPassword !== confirmPassword) {
-      setError("パスワードが一致しません");
-      return;
-    }
+    // 1. ログイン処理開始 & ローディング表示
+    setViewState((prev) => ({
+      ...prev,
+      status: "loading",
+      message: "ログイン中...",
+    }));
 
-    if (!isValidate) {
-      setError("要件を満たしていません");
-      return;
-    }
-    if (isValidate) {
-      setTimeout(() => {
-        // TODO: loginValueの設定
-        if (
-          userMail == "demo@example.com" &&
-          userPassword == "password123" &&
-          confirmPassword == "password123"
-        ) {
-          setLoginMessage("ログイン中‥");
-          console.log("サーバーレスポンス:", data);
-          setFieldMessage("ログイン中‥");
-          setSuccessLogin(true);
-          setIsMessageVisible(true);
-          navigate(ROUTES_HOME);
-        } else {
-          console.error(error);
-          setFieldMessage("ログイン認証に失敗しました");
-          setIsMessageVisible(true);
-
-          setUserMail("");
-          setUserPassword("");
-        }
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    }
-  };
-
-  // アカウント登録画面を表示
-  const handleAddOn = (event) => {
-    event.preventDefault();
-    setIsLoginView(false);
-  };
-
-  //  パスワード忘れ画面を表示
-  const handleShowForgotPassword = () => {
-    setShowForgotPassword(true);
-  };
-
-  //  パスワード忘れ画面を閉じる
-  const closeForgotPassword = () => {
-    setShowForgotPassword(false);
-  };
-
-  // ログイン成功か失敗のメッセージフィールド
-  useEffect(() => {
-    if (isMessageVisible && successLogin) {
-      return (
-        <MessageField
-          id="successMessage"
-          className="p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
-          icon="✅"
-        >
-          {FieldMessage}
-        </MessageField>
+    // 2. 認証処理（1秒後に実行）
+    setTimeout(() => {
+      const user = mockUserData.find(
+        (user) =>
+          user.email === formData.email && user.password === formData.password
       );
-    } else if (isMessageVisible && !successLogin) {
-      return (
-        <MessageField
-          id="errorMessage"
-          className="p-4 bg-gradient-to-r from-red-100 to-pink-100 border-2 border-red-300 text-red-800 rounded-xl shadow-lg"
-          icon="❌"
-        >
-          {FieldMessage}
-        </MessageField>
-      );
-    }
-  }, [isMessageVisible, successLogin]);
 
-  // パスワード再設定
-  const handleResetPassword = async (event) => {
-    event.preventDefault();
-    setError("");
-    setErrors([]);
+      if (user) {
+        // 3. ログイン成功時の処理
+        setViewState((prev) => ({
+          ...prev,
+          status: "success",
+          message: "ログイン成功！",
+        }));
 
-    if (userPassword !== confirmPassword) {
-      setError("パスワードが一致しません");
-      return;
-    }
+        // 1.5秒後にホームへ遷移
+        setTimeout(() => {
+          const mockUser = {
+            email: user.email,
+            name: user.userName,
+            // 必要な基本データのみ抽出（Reactコンポーネントや関数は除外）
+          };
+          // TODO: ホームヘッダーにモックデータが表示されないので改善
+          // const { icon, ...userToNavigate } = mockUserData;
 
-    if (!isValidate) {
-      setError("要件を満たしていません");
-      return;
-    }
-    // const formData = new FormData(event.target);
-    // const email = formData.get("email");
+          navigate(ROUTES.HOME, { state: { user: mockUser } });
+        }, 1500);
+      } else {
+        // 4. 失敗時の処理
+        setErrors({
+          general: "メールアドレスまたはパスワードが正しくありません。",
+        });
+        setViewState((prev) => ({
+          ...prev,
+          status: "error",
+          message: "メールアドレスまたはパスワードが正しくありません。",
+        }));
 
-    try {
-      const res = await fetch("api/stats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        //  Cookie をやり取りする場合は必須
-        credentials: "include",
-        body: JSON.stringify(password, newPassword),
-      });
-
-      if (!res.ok) {
-        throw new Error("メールアドレスまたはパスワードが正しくありません");
+        // 2秒後にエラー表示を消す
+        setTimeout(() => {
+          setViewState((prev) => ({ ...prev, status: "idle", message: "" }));
+        }, 1500);
       }
-    } catch (err) {
-      console.error(err);
-    }
+    }, 1000); // 1秒間ローディングを表示
   };
 
-  useEffect(() => {
-    if (showForgotPassword) {
-      return (
-        <div
-          id="forgotPasswordPopup"
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        >
+  // パスワードリセット画面を開く
+  const handleForgotPassword = () => {
+      // フォームの状態をここでリセットしてから、ポップアップを開く
+    setErrors({});
+    setFormData({
+      email: "", // もしメアドを引き継ぎたいなら、この行は削除
+      password: "",
+      confirmPassword: "",
+    });
+    setIsSubmittable(false);
+    setViewState((prev) => ({
+      ...prev,
+      isPasswordVisible: false,
+      status: "idle",
+      message: "",
+      showForgotPassword: true, // 最後にポップアップを開く
+    }));
+  };
+
+  /**
+   * パスワードリセット処理（UIのみ）
+   */
+  // TODO: 変更処理がちょっとおかしい
+  const handleResetPassword = (event) => {
+    event.preventDefault();
+    if (!isSubmittable) return; // 送信不可なら何もしない
+    // このデモではUIを閉じるのみ
+    setViewState((prev) => ({...prev, showForgotPassword: true}));
+    setViewState((prev) => ({
+      ...prev,
+      status: "loading",
+      message: "パスワードリセット中...",
+    }));
+
+    // 2. 認証処理（1秒後に実行）
+    setTimeout(() => {
+      if (formData.confirmPassword === formData.password) {
+        console.log("Password reset for:", formData.email);
+        setViewState((prev) => ({
+          ...prev,
+          status: "success",
+          message: "パスワードを変更しました",
+        })); //成功メッセージの表示
+        // 1.5秒後にパスワードリセットポップを閉じる
+        setTimeout(() => {
+          setViewState((prev) => ({
+            ...prev,
+            showForgotPassword: false, // ポップアップを閉じる
+            status: "idle", // statusを通常に戻す
+            message: "", // メッセージをクリア
+          }));
+        }, 1500);
+      } else {
+        setErrors({
+          general: "メールアドレスまたはパスワードが正しくありません。",
+        });
+        setViewState((prev) => ({
+          ...prev,
+          status: "error",
+          message: "メールアドレスまたはパスワードが正しくありません。",
+        }));
+
+        // 2秒後にエラー表示を消す
+        setTimeout(() => {
+          setViewState((prev) => ({
+            ...prev,
+            showForgotPassword: false, // ポップアップを閉じる
+            status: "idle",
+            message: "",
+          }));
+        }, 1500);
+      }
+    }, 1000); // 1秒間ローディングを表示
+  };
+
+  return (
+    <div className="relative bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen flex flex-col items-center justify-center p-4">
+      
+      {/* パスワード忘れのポップアップ */}
+      {viewState.showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 w-full max-w-md p-6">
-            <LoginHeader
-              title="パスワードをリセット"
-              icon="🔑"
-              description="新しいパスワードを設定してください"
-            />
-            <form
-              id="forgotPasswordForm"
-              onsubmit={handleResetPassword}
-              className="space-y-4"
-            >
+
+          {/* リセット画面用オーバーレイ表示 */}
+          {(viewState.status === "loading" ||
+            viewState.status === "success" ||
+            viewState.status === "error") && (
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <MessageField
+                icon={
+                  viewState.status === "success"
+                    ? "✅"
+                    : viewState.status === "error"
+                    ? "❌"
+                    : "⏳"
+                }
+                id="statusMessage"
+                className={`p-6 border-2 rounded-xl shadow-lg ${
+                  viewState.status === "success"
+                    ? "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-800"
+                    : viewState.status === "error"
+                    ? "bg-gradient-to-r from-orange-100 to-orange-100 border-orange-300 text-orange-800"
+                    : "bg-gradient-to-r from-gray-100 to-gray-100 border-gray-300 text-gray-800"
+                }`}
+              >
+                {viewState.message}
+              </MessageField>
+            </div>
+          )}
+
+            <LoginHeader title="パスワードをリセット" icon="🔑" />
+            <form onSubmit={handleResetPassword} className="space-y-4 mt-4">
               <InputField
                 type="email"
-                id="email"
                 name="email"
+                labelText="メールアドレス"
                 className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
                 placeholder="example@email.com"
-                htmlFor="email"
-                labelText="メールアドレス"
                 icon="📩"
-                value={userMail}
-                onChange={(event) => {
-                  handleGetMail(event.target.value);
-                  validateInput(event.target.value);
-                }}
+                value={formData.email}
+                onChange={handleInputChange}
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
+              <InputField
+                type={viewState.isPasswordVisible ? "text" : "password"}
+                id="password"
+                name="password"
+                labelText="新しいパスワード"
+                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                placeholder="新しいパスワード"
+                icon="🔒"
+                value={formData.password}
+                onChange={handleInputChange}
+              >
+                <ToggleButton
+                  onClick={() => {
+                    togglePasswordVisibility();
+                  }}
+                  viewState={viewState.isPasswordVisible}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
+              </InputField>
 
               <InputField
-                type="password"
-                id="resetpassword"
-                name="password"
-                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
-                placeholder="new password"
-                labelText="新しいパスワード: 6文字以上、英数字1文字以上使用してください"
-                icon="🔒"
-                value={newPassword}
-                onChange={(event) => {
-                  handleGetPassword(event.target.value);
-                  validateInput(event.target.value);
-                }}
-              >
-                <button
-                  type="button"
-                  onclick={togglePassword}
-                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                  id="togglePasswordBtn"
-                >
-                  {isVisible ? "🙈" : "👁️"}
-                </button>
-              </InputField>
-              <InputField
-                type="password"
-                id="confirmResetpassword"
+                type={viewState.isPasswordVisible ? "text" : "password"}
+                id="confirmPassword"
                 name="confirmPassword"
+                labelText="新しいパスワード（確認）"
                 className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
                 placeholder="もう一度入力してください"
-                labelText="パスワード確認"
                 icon="🔒"
-                value={confirmPassword}
-                onChange={(event) => {
-                  handleGetPassword(event.target.value);
-                  validateInput(event.target.value);
-                }}
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
               >
-                <button
-                  type="button"
-                  onclick={togglePassword}
-                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                  id="togglePasswordBtn"
-                >
-                  {isVisible ? "🙈" : "👁️"}
-                </button>
+                <ToggleButton
+                  onClick={() => {
+                    togglePasswordVisibility();
+                  }}
+                  viewState={viewState.isPasswordVisible}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </InputField>
-
               <div className="flex space-x-3 pt-4">
+                {errors.general && (
+                  <p className="text-red-500 text-sm text-center">
+                    {errors.general}
+                  </p>
+                )}
                 <FunctionButton
                   type="button"
                   className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200"
-                  onClick={closeForgotPassword}
+                  onClick={() =>
+                    setViewState({ ...viewState, showForgotPassword: false })
+                  }
                 >
                   キャンセル
                 </FunctionButton>
-
                 <FunctionButton
                   type="submit"
-                  disabled={isValidate}
                   className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   送信
@@ -351,290 +374,142 @@ export function Login() {
             </form>
           </div>
         </div>
-      );
-    }
-  }, [showForgotPassword]);
+      )}
 
-  if (isLoginView) {
-    return (
-      <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen flex items-center justify-center p-4">
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 w-full max-w-md p-8">
-          <LoginHeader
-            title="冷蔵庫管理"
-            icon={<appleIcon />}
-            description="アカウントにログインしてください"
-          />
-          <form
-            id="forgotPasswordForm"
-            onsubmit={handleShowForgotPassword}
-            className="space-y-4"
-          ></form>
-          <LoginHeader>アカウントにログインしてください</LoginHeader>
-          <InputField
-            type="email"
-            id="email"
-            name="email"
-            className="w-full px-4 py-3 pl-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-            placeholder="example@email.com"
-            htmlFor="email"
-            labelText="メールアドレス"
-            icon="📩"
-            value={userMail}
-            onChange={(event) => {
-              handleGetPassword(event.target.value);
-              validateInput(event.target.value);
-            }}
-          />
-
-          <InputField
-            type="password"
-            id="password"
-            name="password"
-            className="w-full px-4 py-3 pl-12 pr-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-            placeholder="パスワード: 6文字以上、英数字1文字以上使用してください"
-            pattern="(?=.*[A-Za-z0-9]).{6,}"
-            minlength="8"
-            htmlFor="password"
-            labelText="パスワード"
-            icon="🔒"
-            value={userPassword}
-            onChange={(event) => {
-              handleGetPassword(event.target.value);
-              validateInput(event.target.value);
-            }}
-          >
-            <button
-              type="button"
-              onclick={togglePassword()}
-              class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-              id="togglePasswordBtn"
-            >
-              {isVisible ? "🙈" : "👁️"}
-            </button>
-          </InputField>
-
-          {/* <!-- パスワードを忘れた場合 --> */}
-          <div class="text-right">
-            <a
-              href="#"
-              onclick={handleShowForgotPassword}
-              class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors duration-200"
-            >
-              パスワードを忘れた場合
-            </a>
-          </div>
-
-          {/* <!-- エラーメッセージ（非表示） --> */}
-          <MessageField
-            id="errorMessage"
-            class="hidden p-4 bg-gradient-to-r from-red-100 to-pink-100 border-2 border-red-300 text-red-800 rounded-xl shadow-lg"
-            icon="❌"
-          >
-            メールアドレスまたはパスワードが正しくありません
-          </MessageField>
-
-          {/* <!-- 成功メッセージ（非表示） --> */}
-          <MessageField
-            id="successMessage"
-            class="hidden p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
-            icon="✅"
-          >
-            ログインしています...
-          </MessageField>
-
-          {/* <!-- ログインボタン --> */}
-          <FunctionButton
-            type="submit"
-            disabled={errors.length > 0}
-            class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
-            id="loginBtn"
-            onClick={handleLogin}
-          >
-            <span class="text-xl">🔐</span>
-            <span>{loginMessage}</span>
-          </FunctionButton>
-
-          {/* <!-- 区切り線 --> */}
-          <div className="flex items-center my-8">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500 bg-white">または</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-
-          {/* <!-- アカウント作成リンク --> */}
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">まだアカウントをお持ちでない方</p>
-
-            <FunctionButton
-              type="submit"
-              class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
-              id="loginBtn"
-              onClick={handleAddOn}
-            >
-              <span class="text-xl">👤</span>
-              <span>新規アカウント作成</span>
-            </FunctionButton>
-
-            {/* <!-- フッター --> */}
-            <LoginFooter />
-          </div>
+      {/* デフォルトのログイン画面 */}
+      <div className="w-full max-w-md lg:absolute lg:top-4 lg:right-4 lg:w-auto mb-4 lg:mb-0 bg-blue-100 border-2 border-blue-300 text-blue-800 p-4 rounded-xl shadow-lg z-50">
+        <div className="text-sm">
+          <div className="font-semibold mb-2">🔍 デモ用ログイン情報</div>
+          {mockUserData.map((userData) => (
+            <DemoInfo key={userData.userId} userData={userData} />
+          ))}
         </div>
       </div>
-    );
-  } else {
-    return (
-      <body class="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen">
-        <div class="min-h-screen flex items-center justify-center p-4">
-          <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md border border-white/20">
-            {/* <!-- ヘッダー --> */}
-            <div class="text-center mb-8">
-              <div class="bg-gradient-to-br from-green-400 to-emerald-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <span class="text-4xl">🥬</span>
-              </div>
-              <h1 class="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
-                冷蔵庫管理アプリ
-              </h1>
-              <p class="text-gray-700 font-medium">新規アカウント作成</p>
-            </div>
 
-            {/* <!-- 登録フォーム --> */}
-            <form id="registerForm" class="space-y-6">
-              {/* <!-- ユーザー名 --> */}
-              <InputField
-                type="text"
-                id="username"
-                name="username"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                placeholder="example@email.com"
-                labelText="ユーザー名"
-                icon="✒️"
-                value={userName}
-                onChange={handleGetName}
-              />
-              {/* <!-- メールアドレス --> */}
-              <InputField
-                type="email"
-                id="email"
-                name="email"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                placeholder="example@email.com"
-                htmlFor="email"
-                labelText="メールアドレス"
-                icon="📩"
-                value={userMail}
-                onChange={handleGetMail}
-              />
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 w-full max-w-md p-8">
+        <LoginHeader
+          title="冷蔵庫管理"
+          icon="🥬"
+          description="アカウントにログインしてください"
+        />
 
-              {/* <!-- パスワード --> */}
-              <InputField
-                type="password"
-                id="password"
-                name="password"
-                className="w-full px-4 py-3 pl-12 pr-12 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                placeholder="6文字以上、英数字1文字以上使用してください"
-                pattern="(?=.*[A-Za-z0-9]).{6,}"
-                minlength="8"
-                htmlFor="password"
-                labelText="パスワード"
-                icon="🔒"
-                value={userPassword}
-                onChange={(event) => {
-                  handleGetPassword(event.target.value);
-                  getPasswordStrength(event.target.value);
-                }}
-              >
-                <button
-                  type="button"
-                  onclick={togglePassword}
-                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                  id="togglePasswordBtn"
-                >
-                  {isVisible ? "🙈" : "👁️"}
-                </button>
-              </InputField>
+        <form onSubmit={handleLogin} className="space-y-5 mt-6">
+          <div>
+            <InputField
+              type="email"
+              id="email"
+              name="email"
+              labelText="メールアドレス"
+              className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+              icon="📩"
+              placeholder="example@email.com"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
+          </div>
 
-              {/* <!-- パスワード確認 --> */}
-              <InputField
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
-                placeholder="パスワードを再入力してください"
-                pattern="(?=.*[A-Za-z0-9]).{6,}"
-                minlength="8"
-                htmlFor="password"
-                labelText="パスワード確認"
-                icon="🔒"
-                value={confirmPassword}
-                onChange={(event) => {
-                  handleGetPassword(event.target.value);
-                  getPasswordStrength(event.target.value);
-                }}
-              >
-                <button
-                  type="button"
-                  onclick={togglePassword}
-                  class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                  id="togglePasswordBtn"
-                >
-                  {isVisible ? "🙈" : "👁️"}
-                </button>
-              </InputField>
-
-              {/* <!-- 利用規約同意 --> */}
-              <div class="flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  name="terms"
-                  class="mt-1 w-5 h-5 text-green-600 border-green-300 rounded-md focus:ring-green-400 focus:ring-2"
-                  required
-                />
-                <label for="terms" class="text-sm text-gray-600">
-                  <span class="text-green-600 hover:text-emerald-600 underline decoration-2 underline-offset-2 cursor-pointer font-medium">
-                    利用規約
-                  </span>
-                  および
-                  <span class="text-green-600 hover:text-emerald-600 underline decoration-2 underline-offset-2 cursor-pointer font-medium">
-                    プライバシーポリシー
-                  </span>
-                  に同意します
-                </label>
-              </div>
-
-              {/* <!-- 登録ボタン --> */}
-              <FunctionButton
-                type="submit"
-                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                アカウント作成
-              </FunctionButton>
-            </form>
-
-            {/* <!-- ログインリンク --> */}
-            <div class="mt-6 text-center">
-              <p class="text-gray-600">
-                すでにアカウントをお持ちですか？
-                <a
-                  href="#"
-                  class="text-green-600 hover:text-emerald-600 font-semibold underline decoration-2 underline-offset-2"
-                >
-                  ログイン
-                </a>
-              </p>
-            </div>
-
-            {/* <!-- 成功メッセージ（非表示） --> */}
-            <MessageField
-              id="successMassage"
-              className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
-              icon="✅"
+          <div>
+            <InputField
+              type={viewState.isPasswordVisible ? "text" : "password"}
+              id="password"
+              name="password"
+              labelText="パスワード"
+              className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+              icon="🔒"
+              placeholder="パスワードを入力"
+              value={formData.password}
+              onChange={handleInputChange}
             >
-              アカウントが正常に作成されました！
-            </MessageField>
+              <ToggleButton
+                onClick={() => {
+                  togglePasswordVisibility();
+                }}
+                viewState={viewState.isPasswordVisible}
+              />
+            </InputField>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+          </div>
+
+          {errors.general && (
+            <p className="text-red-500 text-sm text-center">{errors.general}</p>
+          )}
+
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() =>{
+                handleForgotPassword();
+              }}
+              className="text-sm text-green-600 hover:text-green-700 font-medium"
+            >
+              パスワードを忘れた場合
+            </button>
+          </div>
+
+          <div className="flex justify-center">
+            <FunctionButton
+              type="submit"
+              disabled={!isSubmittable}
+              className="w-[70%] bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 disabled:bg-gray-400 disabled:from-gray-400 disabled:shadow-none"
+            >
+              🔐 ログイン
+            </FunctionButton>
+          </div>
+        </form>
+
+        <div className="flex items-center my-6">
+          <div className="flex-1 border-t border-gray-300"></div>
+          <span className="px-4 text-sm text-gray-500">または</span>
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        <div className="text-center">
+          <p className="text-gray-600 mb-2">まだアカウントをお持ちでない方</p>
+
+          <div className="flex justify-center">
+            <FunctionButton
+              onClick={() => navigate(ROUTES.REGISTER)}
+              className="w-[70%] bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+            >
+              👤 新規アカウント作成
+            </FunctionButton>
           </div>
         </div>
-      </body>
-    );
-  }
+
+        <LoginFooter />
+      </div>
+
+      {/* ログイン状態に応じたオーバーレイ表示 */}
+      {(viewState.status === "loading" ||
+        viewState.status === "success" ||
+        viewState.status === "error") && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <MessageField
+            icon={
+              viewState.status === "success"
+                ? "✅"
+                : viewState.status === "error"
+                ? "❌"
+                : "⏳"
+            }
+            id="statusMessage"
+            className={`p-6 border-2 rounded-xl shadow-lg ${
+              viewState.status === "success"
+                ? "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-800"
+                : viewState.status === "error"
+                ? "bg-gradient-to-r from-orange-100 to-orange-100 border-orange-300 text-orange-800"
+                : "bg-gradient-to-r from-gray-100 to-gray-100 border-gray-300 text-gray-800"
+            }`}
+          >
+            {viewState.message}
+          </MessageField>
+        </div>
+      )}
+    </div>
+  );
 }
