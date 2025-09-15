@@ -3,6 +3,8 @@ export const mockUserData = [
     userId: 1,
     userName: "田中太郎",
     gender: "male",
+    email: "demo1@example.com",
+    password: "password123",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -26,6 +28,8 @@ export const mockUserData = [
     userId: 2,
     userName: "田中好子",
     gender: "female",
+    email: "demo2@example.com",
+    password: "password456",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -48,8 +52,10 @@ export const mockUserData = [
   },
   {
     userId: 3,
-    userName: "KABA.ちゃん",
+    userName: "KAMA.ちゃん",
     gender: "genderless",
+    email: "demo3@example.com",
+    password: "password789",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
