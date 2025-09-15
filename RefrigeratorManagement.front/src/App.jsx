@@ -1,9 +1,10 @@
 import "./App.css";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { Home } from "pages/Home";
 import { FoodAdd } from "pages/FoodAdd";
 import { FoodEdit } from "pages/FoodEdit";
 import { Login } from "pages/Login";
+import { Register } from "pages/Register"; 
 import { CATEGORY_ICONS, ROUTES } from "./const";
 import { useEffect, useState } from "react";
 import mockFoodData from "./data/MockFoodData";
@@ -60,8 +61,10 @@ function App() {
   return (
     <>
       <Routes location={backgroundLocation || location}>
+        {/* アプリの初期表示パス("/")をログインページ("/login")に自動的にリダイレクト */}
+        <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
         <Route
-          path={ROUTES.HOME}
+          path={ROUTES.HOME} // "/home"ページ
           element={
             <Home
               foods={filteredFoods} // フィルタリング後のfoodsを渡す
@@ -72,8 +75,10 @@ function App() {
           }
         />
         <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.REGISTER} element={<Register />} /> {/* 新規登録ページのルートを追加 */}
       </Routes>
 
+      {/* 以下はモーダル表示用のルーティング */}
       {backgroundLocation && (
         <Routes>
           <Route

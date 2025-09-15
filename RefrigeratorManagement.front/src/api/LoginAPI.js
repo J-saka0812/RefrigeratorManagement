@@ -1,8 +1,8 @@
 import { ROUTES } from "const";
 
 
-  // APIからのデータ取得
-  export const handleLogin = async (event) => {
+  // API関数
+  export const UserLogin = async (event) => {
     event.preventDefault();
     setError("");
     setErrors([]);

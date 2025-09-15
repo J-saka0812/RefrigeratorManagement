@@ -12,7 +12,8 @@ export function InputField({
   value,
   onChange,
   minlength,
-  pattern
+  pattern,
+  children // childrenを受け取る
 }) {
   return (
     <div>
@@ -29,17 +30,20 @@ export function InputField({
           type={type}
           id={id}
           name={name}
-          className={className}
+          // アイコン表示のため、デフォルトで左側に余白を追加
+          className={`pl-12 ${className}`}
           placeholder={placeholder}
           required
-          minlength={minlength}
+          minLength={minlength}
           pattern={pattern}
         />
         {icon && (
-          <span className="absolute left-4 top-3.5 text-gray-400 text-lg">
+          <span className="absolute left-4 top-3 text-gray-400 text-lg">
             {icon}
           </span>
         )}
+        {/* InputField内にボタンなどを配置できるようにする */}
+        {children}
       </div>
     </div>
   );
