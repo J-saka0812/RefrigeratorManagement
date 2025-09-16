@@ -10,7 +10,7 @@ export function SearchBar({ onSearch }) {
   };
 
   return (
-    <div className="relative flex-1">
+    <div className="relative min-w-0">
       <input
         type="text"
         placeholder="食品名で検索..."
@@ -23,3 +23,4 @@ export function SearchBar({ onSearch }) {
     </div>
   );
 }
+
