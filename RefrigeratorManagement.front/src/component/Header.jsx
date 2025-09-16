@@ -1,25 +1,17 @@
-import { useEffect, useState } from "react";
 import { FunctionButton } from "./FunctionButton";
-import { mockUserData } from "../data/MockUserData.jsx";
+import { MessageField } from "./MessageField";
 
-export function Header({mockUser}) {
-  const [user, setUser] = useState({});
-
-  useEffect(() => {
-    // ログイン機能が実装されるまで、モックデータの最初のユーザーを表示
-    const currentUser = mockUser;
-    if (currentUser) {
-      setUser(currentUser);
-    }
-  }, []);
-
-  
-  // useEffect(() => {                               
-  // データベースからの数量取得                            
-  // fetch('api/userData')                                 
-  // .then(res => re.json())              
-  // .then(data => setUser(user));
-  // }
+export function Header({ user, onClick }) {
+  if (!user) {
+    return (
+      <MessageField
+        icon="⏳"
+        className="p-6 border-2 rounded-xl shadow-lg bg-gradient-to-r from-gray-100 to-gray-100 border-gray-300 text-gray-800"
+      >
+        ユーザー情報を読み込んでいます...
+      </MessageField>
+    );
+  }
 
   return (
     <div>
@@ -37,7 +29,11 @@ export function Header({mockUser}) {
                 <p className="text-sm text-gray-600">ID: {user.userId}</p>
               </div>
             </div>
-            <FunctionButton type="button" onclick className="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <FunctionButton
+              type="button"
+              onClick={onClick}
+              className="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
               ログアウト
             </FunctionButton>
           </div>

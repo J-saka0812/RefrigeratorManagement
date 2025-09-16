@@ -125,7 +125,6 @@ export function Login() {
    */
   const handleLogin = (event) => {
     event.preventDefault();
-
     // 1. ログイン処理開始 & ローディング表示
     setViewState((prev) => ({
       ...prev,
@@ -150,15 +149,15 @@ export function Login() {
 
         // 1.5秒後にホームへ遷移
         setTimeout(() => {
-          const mockUser = {
-            email: user.email,
-            name: user.userName,
-            // 必要な基本データのみ抽出（Reactコンポーネントや関数は除外）
-          };
+        //   const mockUser = {
+        //     email: user.email,
+        //     name: user.userName,
+        //     必要な基本データのみ抽出（Reactコンポーネントや関数は除外）
+        //   };
           // TODO: ホームヘッダーにモックデータが表示されないので改善
-          // const { icon, ...userToNavigate } = mockUserData;
+          const { icon, ...userToNavigate } = user;
 
-          navigate(ROUTES.HOME, { state: { user: mockUser } });
+          navigate(ROUTES.HOME, { state: { user: userToNavigate } });
         }, 1500);
       } else {
         // 4. 失敗時の処理
