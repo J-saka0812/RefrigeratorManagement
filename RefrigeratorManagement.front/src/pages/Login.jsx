@@ -9,6 +9,7 @@ import { mockUserData } from "../data/MockUserData";
 import { ROUTES } from "../const";
 import { DemoInfo } from "component/DemoInfo";
 import { ToggleButton } from "component/ToggleButton";
+import styles from "./styles/Login.module.css";
 
 export function Login() {
   const navigate = useNavigate();
@@ -149,14 +150,7 @@ export function Login() {
 
         // 1.5秒後にホームへ遷移
         setTimeout(() => {
-        //   const mockUser = {
-        //     email: user.email,
-        //     name: user.userName,
-        //     必要な基本データのみ抽出（Reactコンポーネントや関数は除外）
-        //   };
-          // TODO: ホームヘッダーにモックデータが表示されないので改善
           const { icon, ...userToNavigate } = user;
-
           navigate(ROUTES.HOME, { state: { user: userToNavigate } });
         }, 1500);
       } else {
@@ -180,7 +174,7 @@ export function Login() {
 
   // パスワードリセット画面を開く
   const handleForgotPassword = () => {
-      // フォームの状態をここでリセットしてから、ポップアップを開く
+    // フォームの状態をここでリセットしてから、ポップアップを開く
     setErrors({});
     setFormData({
       email: "", // もしメアドを引き継ぎたいなら、この行は削除
@@ -200,12 +194,11 @@ export function Login() {
   /**
    * パスワードリセット処理（UIのみ）
    */
-  // TODO: 変更処理がちょっとおかしい
   const handleResetPassword = (event) => {
     event.preventDefault();
     if (!isSubmittable) return; // 送信不可なら何もしない
     // このデモではUIを閉じるのみ
-    setViewState((prev) => ({...prev, showForgotPassword: true}));
+    setViewState((prev) => ({ ...prev, showForgotPassword: true }));
     setViewState((prev) => ({
       ...prev,
       status: "loading",
@@ -254,61 +247,59 @@ export function Login() {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen flex flex-col items-center justify-center p-4">
-      
+    <div className={styles.loginContainer}>
       {/* パスワード忘れのポップアップ */}
       {viewState.showForgotPassword && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 w-full max-w-md p-6">
-
-          {/* リセット画面用オーバーレイ表示 */}
-          {(viewState.status === "loading" ||
-            viewState.status === "success" ||
-            viewState.status === "error") && (
-            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-              <MessageField
-                icon={
-                  viewState.status === "success"
-                    ? "✅"
-                    : viewState.status === "error"
-                    ? "❌"
-                    : "⏳"
-                }
-                id="statusMessage"
-                className={`p-6 border-2 rounded-xl shadow-lg ${
-                  viewState.status === "success"
-                    ? "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-800"
-                    : viewState.status === "error"
-                    ? "bg-gradient-to-r from-orange-100 to-orange-100 border-orange-300 text-orange-800"
-                    : "bg-gradient-to-r from-gray-100 to-gray-100 border-gray-300 text-gray-800"
-                }`}
-              >
-                {viewState.message}
-              </MessageField>
-            </div>
-          )}
+        <div className={styles.forgotPasswordOverlay}>
+          <div className={styles.forgotPasswordContent}>
+            {/* リセット画面用オーバーレイ表示 */}
+            {(viewState.status === "loading" ||
+              viewState.status === "success" ||
+              viewState.status === "error") && (
+              <div className={styles.statusOverlay}>
+                <MessageField
+                  icon={
+                    viewState.status === "success"
+                      ? "✅"
+                      : viewState.status === "error"
+                      ? "❌"
+                      : "⏳"
+                  }
+                  id="statusMessage"
+                  className={`${styles.statusMessage} ${
+                    viewState.status === "success"
+                      ? styles.statusSuccess
+                      : viewState.status === "error"
+                      ? styles.statusError
+                      : styles.statusLoading
+                  }`}
+                >
+                  {viewState.message}
+                </MessageField>
+              </div>
+            )}
 
             <LoginHeader title="パスワードをリセット" icon="🔑" />
-            <form onSubmit={handleResetPassword} className="space-y-4 mt-4">
+            <form onSubmit={handleResetPassword} className={styles.form}>
               <InputField
                 type="email"
                 name="email"
                 labelText="メールアドレス"
-                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                className={`${styles.inputField} ${styles.inputFieldOrange}`}
                 placeholder="example@email.com"
                 icon="📩"
                 value={formData.email}
                 onChange={handleInputChange}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                <p className={styles.errorMessage}>{errors.email}</p>
               )}
               <InputField
                 type={viewState.isPasswordVisible ? "text" : "password"}
                 id="password"
                 name="password"
                 labelText="新しいパスワード"
-                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                className={`${styles.inputField} ${styles.inputFieldOrange}`}
                 placeholder="新しいパスワード"
                 icon="🔒"
                 value={formData.password}
@@ -321,7 +312,7 @@ export function Login() {
                   viewState={viewState.isPasswordVisible}
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                  <p className={styles.errorMessage}>{errors.password}</p>
                 )}
               </InputField>
 
@@ -330,7 +321,7 @@ export function Login() {
                 id="confirmPassword"
                 name="confirmPassword"
                 labelText="新しいパスワード（確認）"
-                className="w-full px-4 py-3 pl-12 border-2 border-orange-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-200 bg-white/80"
+                className={`${styles.inputField} ${styles.inputFieldOrange}`}
                 placeholder="もう一度入力してください"
                 icon="🔒"
                 value={formData.confirmPassword}
@@ -343,20 +334,20 @@ export function Login() {
                   viewState={viewState.isPasswordVisible}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">
+                  <p className={styles.errorMessage}>
                     {errors.confirmPassword}
                   </p>
                 )}
               </InputField>
-              <div className="flex space-x-3 pt-4">
+              <div className={styles.buttonGroup}>
                 {errors.general && (
-                  <p className="text-red-500 text-sm text-center">
+                  <p className={styles.generalErrorMessage}>
                     {errors.general}
                   </p>
                 )}
                 <FunctionButton
                   type="button"
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200"
+                  className={styles.cancelButton}
                   onClick={() =>
                     setViewState({ ...viewState, showForgotPassword: false })
                   }
@@ -365,7 +356,7 @@ export function Login() {
                 </FunctionButton>
                 <FunctionButton
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className={styles.submitButton}
                 >
                   送信
                 </FunctionButton>
@@ -376,37 +367,37 @@ export function Login() {
       )}
 
       {/* デフォルトのログイン画面 */}
-      <div className="w-full max-w-md lg:absolute lg:top-4 lg:right-4 lg:w-auto mb-4 lg:mb-0 bg-blue-100 border-2 border-blue-300 text-blue-800 p-4 rounded-xl shadow-lg z-50">
-        <div className="text-sm">
-          <div className="font-semibold mb-2">🔍 デモ用ログイン情報</div>
+      <div className={styles.demoInfoContainer}>
+        <div className={styles.demoInfoContent}>
+          <div className={styles.demoInfoHeader}>🔍 デモ用ログイン情報</div>
           {mockUserData.map((userData) => (
             <DemoInfo key={userData.userId} userData={userData} />
           ))}
         </div>
       </div>
 
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 w-full max-w-md p-8">
+      <div className={styles.loginFormContainer}>
         <LoginHeader
           title="冷蔵庫管理"
           icon="🥬"
           description="アカウントにログインしてください"
         />
 
-        <form onSubmit={handleLogin} className="space-y-5 mt-6">
+        <form onSubmit={handleLogin} className={styles.loginForm}>
           <div>
             <InputField
               type="email"
               id="email"
               name="email"
               labelText="メールアドレス"
-              className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+              className={`${styles.inputField} ${styles.inputFieldGreen}`}
               icon="📩"
               placeholder="example@email.com"
               value={formData.email}
               onChange={handleInputChange}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              <p className={styles.errorMessage}>{errors.email}</p>
             )}
           </div>
 
@@ -416,7 +407,7 @@ export function Login() {
               id="password"
               name="password"
               labelText="パスワード"
-              className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+              className={`${styles.inputField} ${styles.inputFieldGreen}`}
               icon="🔒"
               placeholder="パスワードを入力"
               value={formData.password}
@@ -430,50 +421,50 @@ export function Login() {
               />
             </InputField>
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              <p className={styles.errorMessage}>{errors.password}</p>
             )}
           </div>
 
           {errors.general && (
-            <p className="text-red-500 text-sm text-center">{errors.general}</p>
+            <p className={styles.generalErrorMessage}>{errors.general}</p>
           )}
 
           <div className="text-right">
             <button
               type="button"
-              onClick={() =>{
+              onClick={() => {
                 handleForgotPassword();
               }}
-              className="text-sm text-green-600 hover:text-green-700 font-medium"
+              className={styles.forgotPasswordLink}
             >
               パスワードを忘れた場合
             </button>
           </div>
 
-          <div className="flex justify-center">
+          <div className={styles.loginButtonContainer}>
             <FunctionButton
               type="submit"
               disabled={!isSubmittable}
-              className="w-[70%] bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 disabled:bg-gray-400 disabled:from-gray-400 disabled:shadow-none"
+              className={styles.loginButton}
             >
               🔐 ログイン
             </FunctionButton>
           </div>
         </form>
 
-        <div className="flex items-center my-6">
-          <div className="flex-1 border-t border-gray-300"></div>
-          <span className="px-4 text-sm text-gray-500">または</span>
-          <div className="flex-1 border-t border-gray-300"></div>
+        <div className={styles.dividerContainer}>
+          <div className={styles.divider}></div>
+          <span className={styles.dividerText}>または</span>
+          <div className={styles.divider}></div>
         </div>
 
-        <div className="text-center">
-          <p className="text-gray-600 mb-2">まだアカウントをお持ちでない方</p>
+        <div className={styles.registerContainer}>
+          <p className={styles.registerText}>まだアカウントをお持ちでない方</p>
 
-          <div className="flex justify-center">
+          <div className={styles.registerButtonContainer}>
             <FunctionButton
               onClick={() => navigate(ROUTES.REGISTER)}
-              className="w-[70%] bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+              className={styles.registerButton}
             >
               👤 新規アカウント作成
             </FunctionButton>
@@ -487,7 +478,7 @@ export function Login() {
       {(viewState.status === "loading" ||
         viewState.status === "success" ||
         viewState.status === "error") && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className={styles.statusOverlay}>
           <MessageField
             icon={
               viewState.status === "success"
@@ -497,12 +488,12 @@ export function Login() {
                 : "⏳"
             }
             id="statusMessage"
-            className={`p-6 border-2 rounded-xl shadow-lg ${
+            className={`${styles.statusMessage} ${
               viewState.status === "success"
-                ? "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-800"
+                ? styles.statusSuccess
                 : viewState.status === "error"
-                ? "bg-gradient-to-r from-orange-100 to-orange-100 border-orange-300 text-orange-800"
-                : "bg-gradient-to-r from-gray-100 to-gray-100 border-gray-300 text-gray-800"
+                ? styles.statusError
+                : styles.statusLoading
             }`}
           >
             {viewState.message}
