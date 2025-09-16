@@ -1,216 +1,159 @@
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# 冷蔵庫管理アプリ - フロントエンド仕様書
 
+## 1. 概要
 
-冷蔵庫管理アプリ - 機能仕様書
+このアプリケーションは、家庭の冷蔵庫内の食品を効率的に管理することを目的としたWebアプリケーションのフロントエンド部分です。
+ユーザー認証機能を備え、ログインしたユーザーごとに食品の登録、一覧表示、編集、削除（CRUD）が可能です。
 
-◆全体概要
+## 2. 主な機能
 
-技術スタック
-: HTML + Tailwind CSS + React.JavaScript（モック段階）
-デザイン
-: レスポンシブ対応、グラデーション基調の現代的UI
-アーキテクチャ
-: 単一HTMLファイル内でのポップアップ方式
-ホーム画面（食品一覧画面）
+- **ユーザー認証**
+  - 新規アカウント作成機能
+  - ログイン・ログアウト機能
+  - パスワードリセット機能（UIのみ）
+- **食品管理 (CRUD)**
+  - 食品の登録（品名、カテゴリ、数量、賞味期限など）
+  - 登録済み食品の一覧表示
+  - 食品情報の編集
+  - 食品の削除（確認ダイアログ付き）
+- **検索・フィルタリング**
+  - 食品名によるリアルタイム検索
+  - カテゴリによる絞り込み
+- **統計表示**
+  - 総食品数
+  - 賞味期限が近い食品数
+  - 期限切れの食品数
 
-◆ ディレクトリ構成
-```
-C:.
-│  .gitignore
-│  eslint.config.js
-│  index.html
-│  jsconfig.json
-│  package.json
-│  postcss.config.js
-│  tailwind.config.js
-│  vite.config.js
-│
-├─docs
-│      frontREADME.md
-│
-├─public
-│      vite.svg
-│
-└─src
-    │  App.css
-    │  App.jsx
-    │  const.js
-    │  index.css
-    │  main.jsx
-    │
-    ├─assets
-    │      react.svg
-    │
-    ├─component
-    │  │  AddFoodButton.jsx
-    │  │  AddFoodModel.jsx
-    │  │  CategoryFilter.jsx
-    │  │  EditFoodModel.jsx
-    │  │  FoodList.jsx
-    │  │  FoodListItem.jsx
-    │  │  FunctionButton.jsx
-    │  │  Header.jsx
-    │  │  SearchBar.jsx
-    │  │  SearchBarContainer.jsx
-    │  │  StatsCard.jsx
-    │  │  StatsCards.jsx
-    │  │
-    │  └─styles
-    │          FoodList.module.css
-    │          FoodListItem.module.css
-    │          StatsCards.module.css
-    │
-    ├─data
-    │      MockFoodData.js
-    │      MockUserData.jsx
-    └─pages
-        │  FoodAdd.jsx
-        │  FoodEdit.jsx
-        │  Home.jsx
-        │  Login.jsx(未実装)
-        │
-        └─styles
-                FoodEdit.module.css
-                Login.module.css(未実装)
-```
+## 3. 技術スタック
 
-◆ コンポーネント構成と役割
+- **フレームワーク**: React 19
+- **ビルドツール**: Vite
+- **スタイリング**: Tailwind CSS, CSS Modules
+- **ルーティング**: React Router
+- **言語**: JavaScript (JSX)
 
-### ◆ 主要コンポーネント
-- **`App.jsx`**: アプリケーションの最上位コンポーネント。状態管理（食品データ、フィルター条件）、ルーティング、データ操作関数などを一元管理する司令塔。
-- **`main.jsx`**: アプリケーションの起動ファイル（エントリーポイント）。
+## 4. セットアップと実行方法
 
-### ◆ `pages` （画面ごと）
-- **`Home.jsx`**: ホーム画面。ヘッダー、統計カード、検索エリア、食品リストなど、各UIセクションを統合して表示するメインページ。
-- **`FoodAdd.jsx`**: 食品追加モーダル。新しい食品を登録するためのフォームを提供。
-- **`FoodEdit.jsx`**: 食品編集モーダル。既存の食品情報を編集するためのフォームを提供。
-- **`Login.jsx`**: ログイン画面（現在はモックアップ）。
+1. **依存関係のインストール:**
+   ```bash
+   yarn install
+   ```
 
-### ◆ `component` （部品ごと）
-- **`Header.jsx`**: ページ上部に表示されるヘッダー。
-- **`StatsCards.jsx`**: 複数の統計情報カードをまとめるコンテナ。
-- **`StatsCard.jsx`**: 「総食品数」など、個々の統計情報を表示するカード。
-- **`SearchBarContainer.jsx`**: 検索バー、カテゴリフィルター、追加ボタンをまとめるコンテナ。
-- **`SearchBar.jsx`**: 食品名で検索するためのテキスト入力欄。
-- **`CategoryFilter.jsx`**: カテゴリで食品を絞り込むためのドロップダウンメニュー。
-- **`FoodList.jsx`**: 食品一覧を表示するリスト全体のコンテナ。
-- **`FoodListItem.jsx`**: 食品リスト内の個々の食品アイテム。
-- **`FunctionButton.jsx`**: アプリ内で共通して使われるボタンスタイル。
-- **`AddFoodButton.jsx`**: 食品追加モーダルを呼び出すためのボタン（現在は`SearchBarContainer`内のボタンで代替）。
+2. **開発サーバーの起動:**
+   ```bash
+   yarn dev
+   ```
+   サーバーが起動し、 `http://localhost:5173` などでアプリケーションにアクセスできます。
 
-◆ 主な特徴
+   ◆ スクリーンショット                                                                  
 
-このアプリケーションは、家庭の冷蔵庫内の食品を効率的に管理することを目的としたWebアプリケーションです。
+### ログイン画面                                                                                                                      
+![ホーム画面](images/ログイン画面.png)                                                                                   
 
-- **直感的なUI/UX:** グラデーションを基調としたモダンなデザインと、ガラスモーフィズム効果を取り入れたポップアップにより、直感的で心地よい操作感を提供します。
-- **リアルタイム在庫管理:** 食品の追加、編集、削除がリアルタイムで一覧に反映されます。賞味期限が近づくと警告が表示され、食品ロスを削減します。
-- **強力な検索機能:** 食品名によるリアルタイム検索と、カテゴリによる絞り込みフィルターを組み合わせることで、目的の食品を素早く見つけ出すことができます。
-- **コンポーネントベース設計:** Reactを採用し、機能ごとにコンポーネントを分割しています。これにより、メンテナンス性と拡張性の高いコードベースを実現しています。
-
-◆ スクリーンショット                                                                                                                
-                                                                                                                                    
+                                                               
 ### ホーム画面                                                                                                                      
 ![ホーム画面](images/ホームイメージ.png)                                                                                            
                                                                                                                                     
 ### 画面遷移図                                                                                                                      
 ![画面遷移図](images/画面遷移図.png)  
 
-◆統計表示
+## 5. ディレクトリ構造
 
-総食品数の表示
-期限切れ間近の食品数（警告表示）
-期限切れ食品数（危険表示）
-各統計にアイコンとカラーコーディング
+```
+RefrigeratorManagement.front/
+│  index.html         # SPAのエントリポイント
+│  vite.config.js     # Vite設定ファイル
+│  tailwind.config.js # Tailwind CSS設定ファイル
+│  postcss.config.js  # PostCSS設定ファイル
+│  package.json       # プロジェクト定義と依存関係
+│
+├─public/            # 静的ファイル
+│
+└─src/               # ソースコード
+    │  App.jsx          # アプリケーションのメインコンポーネント、ルーティング管理
+    │  main.jsx         # Reactアプリケーションのエントリポイント
+    │  const.js         # 定数（ルーティングパス、カテゴリ情報など）
+    │  index.css        # グローバルなスタイルシート
+    │
+    ├─api/             # API連携関連（現在は未使用）
+    │
+    ├─component/       # 再利用可能なUIコンポーネント
+    │  │  Header.jsx
+    │  │  FoodList.jsx
+    │  │  InputField.jsx
+    │  │  (他多数...)
+    │  └─styles/        # コンポーネント固有のCSSモジュール
+    │
+    ├─data/            # モックデータ
+    │      MockFoodData.js
+    │      MockUserData.jsx
+    │
+    └─pages/           # 各ページに対応するコンポーネント
+        │  Home.jsx
+        │  Login.jsx
+        │  Register.jsx
+        │  FoodAdd.jsx
+        │  FoodEdit.jsx
+        └─styles/        # ページ固有のCSSモジュール
+```
 
-◆検索・フィルター機能
+## 6. コンポーネントの役割
 
-リアルタイム食品名検索
-カテゴリ別フィルタリング（野菜、肉類、魚類、乳製品、調味料、その他）
-検索結果なしの場合の空状態表示
-複数条件での絞り込み対応
+### `pages` （ページ単位コンポーネント）
 
-◆食品管理機能
+- **`App.jsx`**: アプリケーション全体の司令塔。状態管理（食品データ、ユーザー情報）、ルーティングの定義、データ操作関数（追加、編集、削除）を一元管理します。
+- **`Home.jsx`**: ログイン後のメイン画面。ヘッダー、統計カード、検索エリア、食品リストなど、各UIセクションを統合して表示します。
+- **`Login.jsx`**: ログインページ。ユーザー認証を行い、成功時にはHOME画面に遷移します。パスワードリセット機能も提供します。
+- **`Register.jsx`**: 新規アカウント作成ページ。ユーザー名、メールアドレス、パスワードを登録します。
+- **`FoodAdd.jsx`**: 食品追加モーダル。スライドイン形式で表示され、新しい食品を登録するためのフォームを提供します。
+- **`FoodEdit.jsx`**: 食品編集モーダル。既存の食品情報を編集するためのフォームを提供します。
 
-食品一覧表示（アイコン、名前、カテゴリ、数量、賞味期限）
-賞味期限による色分け表示（正常/警告/危険）
-編集・削除ボタン付き
-ホバーエフェクト
+### `component` （UI部品コンポーネント）
 
-◆食品登録機能（ポップアップ）
+- **`Header.jsx`**: `Home.jsx`の上部に表示されるヘッダー。ログイン中のユーザー名、アイコン、ログアウトボタンを表示します。
+- **`LoginHeader.jsx` / `LoginFooter.jsx`**: ログイン・新規登録ページで共通して使用されるヘッダーとフッターです。
+- **`FoodList.jsx` / `FoodListItem.jsx`**: 食品一覧およびその各項目を表示します。賞味期限に応じて背景色が変化します。
+- **`SearchBarContainer.jsx`**: 検索バー、カテゴリフィルター、追加ボタンをまとめるコンテナです。
+- **`InputField.jsx`**: アイコン付きのテキスト入力フィールドです。ログイン・登録・食品編集フォームなどで広く使用されます。
+- **`FunctionButton.jsx`**: アプリ内で共通して使われる汎用的なボタンスタイルです。
+- **`MessageField.jsx`**: ログイン処理中やエラー時などに、状態をユーザーに伝えるためのメッセージボックスです。
+- **`ToggleButton.jsx`**: パスワードの表示・非表示を切り替えるボタンです。
+- **`DemoInfo.jsx`**: 開発用に、デモユーザーのログイン情報を表示するコンポーネントです。
 
-右側スライドイン式ポップアップ
-必須項目: 食品名、カテゴリ、数量、単位、賞味期限
-任意項目: メモ
-フォームバリデーション
-成功メッセージ表示
-キャンセル・登録ボタン
+## 7. データ構造
 
-◆食品編集機能（ポップアップ）
+アプリケーションは現在モックデータを使用しています。
 
-登録画面と同様のUI
-既存データの自動入力
-データベースからの情報取得（モック実装済み）
-更新処理と成功メッセージ
+### ユーザーデータ (`MockUserData.jsx`)
 
-◆削除機能
-
-確認ダイアログ付き削除
-個別削除対応
-
-◆UI/UX特徴
-
-グラデーション背景とガラスモーフィズム効果
-アニメーション付きボタン（ホバー時の浮き上がり効果）
-レスポンシブデザイン（モバイル対応）
-日本語フォント（Noto Sans JP）使用
-直感的なアイコン使用
-
-◆実装機能
-
-・ 登録ポップアップ表示
-・ 登録ポップアップ閉じる
-・ 食品登録処理
-・ 編集ポップアップ表示・データ設定
-・ 編集ポップアップ閉じる
-・ 食品更新処理
-・ 削除処理
-・ 検索・フィルター処理
-
-◆データ構造（モック）
+```javascript
 {
-  name: '食品名',
-  category: 'カテゴリ',
-  quantity: 数量,
-  unit: '単位',
-  expiryDate: '賞味期限',
-  memo: 'メモ'
-  icon: 'カテゴリアイコン'
+  userId: 1,
+  userName: "田中太郎",
+  gender: "male",
+  email: "demo1@example.com",
+  password: "password123",
+  icon: <svg>...</svg> // JSX要素としてのアイコン
 }
+```
 
-◆今後の拡張予定
+### 食品データ (`MockFoodData.js`)
 
-DBでのデータ永続化→RDS運用も検討
-Javaを使用してDB通信
-Dockerでコンテナ管理
-AWSを使用してEC2、もしくはECSで運用
+```javascript
+{
+  id: 1,
+  name: 'にんじん',
+  category: '野菜',
+  quantity: 3,
+  unit: '本',
+  expiryDate: '2025-09-20',
+  memo: 'カレーに使う',
+  icon: '🥕'
+}
+```
 
-◆React移行時の設計方針
+## 8. 今後の拡張予定
 
-コンポーネント分割
-: 
-アプリケーションを以下の主要コンポーネントに分割。
-- **Pages**: `Home`, `FoodAdd`, `FoodEdit` など画面単位のコンポーネント。
-- **Components**: 画面を構成する部品単位のコンポーネント。
-  - `Header`: ヘッダー
-  - `StatsCards`: 統計情報カード群
-  - `SearchBarContainer`: 検索エリア
-  - `FoodList`: 食品一覧
-  - `FunctionButton`: 共通ボタン
-状態管理
-: 
-`App.jsx` を最上位コンポーネントとし、`useState` を用いて食品データ、フィルター条件、モーダルの表示状態などを一元管理。各コンポーネントには必要なデータと関数をPropsとして渡す。
-API連携
-: (現状はモックデータ) 将来的にはカスタムフック (`useFoodApi`など) を作成し、バックエンドAPIとのデータ通信（CRUD操作）を抽象化する方針。
-エラーハンドリング
-: API連携時にローディング状態とエラー状態を管理し、UIにフィードバックする。
+- バックエンドAPIとの連携によるデータ永続化
+- ユーザーごとの食品データ管理
+- より詳細な統計・分析機能の追加
