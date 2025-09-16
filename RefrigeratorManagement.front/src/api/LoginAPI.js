@@ -102,3 +102,12 @@ import { ROUTES } from "const";
       console.error(err);
     }
   };
+
+
+  
+  // useEffect(() => {
+  // データベースからの数量取得
+  // fetch('api/userData')
+  // .then(res => re.json())
+  // .then(data => setUser(user));
+  // },[])
