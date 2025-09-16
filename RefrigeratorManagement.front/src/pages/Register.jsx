@@ -5,6 +5,7 @@ import { InputField } from "component/InputField";
 import { LoginHeader } from "component/LoginHeader";
 import { MessageField } from "component/MessageField";
 import { ROUTES } from "../const";
+import styles from "./styles/Register.module.css";
 
 export function Register() {
   const navigate = useNavigate();
@@ -106,29 +107,31 @@ export function Register() {
   return (
     <>
       <div
-        className={`bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen flex items-center justify-center p-4 transition-filter duration-300 ${isRegistered ? "blur-sm" : ""}`}>
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md border border-white/20">
+        className={`${styles.registerContainer} ${
+          isRegistered ? styles.blurred : ""
+        }`}>
+        <div className={styles.registerContent}>
           <LoginHeader
             icon="🥬"
             title="新規アカウント作成"
             description="情報を入力してください"
           />
 
-          <form onSubmit={handleRegister} className="space-y-4 mt-6">
+          <form onSubmit={handleRegister} className={styles.form}>
             <div>
               <InputField
                 type="text"
                 id="username"
                 name="username"
                 labelText="ユーザー名"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                className={styles.inputField}
                 icon="✒️"
                 placeholder="田中太郎"
                 value={formData.username}
                 onChange={handleInputChange}
               />
               {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username}</p>
+                <p className={styles.errorMessage}>{errors.username}</p>
               )}
             </div>
             <div>
@@ -137,14 +140,14 @@ export function Register() {
                 id="email"
                 name="email"
                 labelText="メールアドレス"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                className={styles.inputField}
                 icon="📩"
                 placeholder="example@email.com"
                 value={formData.email}
                 onChange={handleInputChange}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                <p className={styles.errorMessage}>{errors.email}</p>
               )}
             </div>
             <div>
@@ -153,14 +156,14 @@ export function Register() {
                 id="password"
                 name="password"
                 labelText="パスワード"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                className={styles.inputField}
                 icon="🔒"
                 placeholder="6文字以上・英数字の両方を使用"
                 value={formData.password}
                 onChange={handleInputChange}
               />
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                <p className={styles.errorMessage}>{errors.password}</p>
               )}
             </div>
             <div>
@@ -169,36 +172,36 @@ export function Register() {
                 id="confirmPassword"
                 name="confirmPassword"
                 labelText="パスワード確認"
-                className="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                className={styles.inputField}
                 icon="🔒"
                 placeholder="パスワードを再入力"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className={styles.errorMessage}>
                   {errors.confirmPassword}
                 </p>
               )}
             </div>
 
-            <div className="pt-4">
+            <div className={styles.submitButtonContainer}>
               <FunctionButton
                 type="submit"
                 disabled={!isSubmittable}
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg disabled:bg-gray-400 disabled:from-gray-400 disabled:shadow-none"
+                className={styles.submitButton}
               >
                 アカウント作成
               </FunctionButton>
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <div className={styles.loginLinkContainer}>
+            <p className={styles.loginLinkText}>
               すでにアカウントをお持ちですか？
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
-                className="ml-2 text-green-600 hover:text-emerald-600 font-semibold underline"
+                className={styles.loginLink}
               >
                 ログイン
               </button>
@@ -209,11 +212,11 @@ export function Register() {
 
       {/* 登録成功時のオーバーレイ表示 */}
       {isRegistered && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className={styles.successOverlay}>
           <MessageField
             icon="✅"
             id="successMessage"
-            className="p-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg"
+            className={styles.successMessage}
           >
             アカウントが正常に作成されました！ログインページに移動します...
           </MessageField>
