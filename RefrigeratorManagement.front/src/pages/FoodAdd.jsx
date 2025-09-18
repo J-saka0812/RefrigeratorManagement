@@ -148,6 +148,7 @@ export function FoodAdd({ onAdd }) {
                   <option value="玉">玉</option>
                   <option value="袋">袋</option>
                   <option value="パック">パック</option>
+                  <option value="ひき">ひき</option>
                   <option value="g">g</option>
                   <option value="kg">kg</option>
                   <option value="ml">ml</option>
