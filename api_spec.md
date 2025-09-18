@@ -8,24 +8,44 @@
 - **エンドポイント URL:** `POST /api/auth/login`
 - **リクエストボディ:**
 
-  ```json
-  {
+```json
+{
+  "email": "demo4@example.com"
+}
+```
+
+- **成功レスポンス (200 OK):**
+  - **レスポンスボディ:** loginリクエストに対応したユーザーオブジェクトを返す。
+
+#### レスポンス例 1: `X-User-Id: 1`
+
+```json
+{
   "id": 1,
   "name": "田中太郎",
   "email": "demo1@example.com"
-  }
-  {
+}
+```
+
+#### レスポンス例 2: `X-User-Id: 2`
+
+```json
+{
   "id": 2,
   "name": "田中好子",
   "email": "demo2@example.com"
-  }
-  {
+}
+```
+
+#### レスポンス例 3: `X-User-Id: 3`
+
+```json
+{
   "id": 3,
   "name": "KAMA.ちゃん",
   "email": "demo3@example.com"
-  }
-
-  ```
+}
+```
 
 ## 2. 認証 (Authentication)
 
@@ -38,7 +58,6 @@
 
   ```json
   {
-    "id": 4,
     "name": "佐藤次郎",
     "email": "demo4@example.com"
   }
@@ -46,12 +65,12 @@
 
 ## 3.食品管理
 
-### GET /api/auth/foods
+### GET /api/foods
 
 ログイン中のユーザーが登録した食品の一覧を取得する。
 
 - **エンドポイント URL:** `GET /api/foods` (食品一覧取得)
-- **レスポンスヘッダー:** -`X-User-Id`: `number` (ログイン時に取得したユーザー ID)
+- **リクエストヘッダー:** -`X-User-Id`: `number` (ログイン時に取得したユーザー ID)
 
 - **成功レスポンス (200 OK):**
   - **レスポンスボディ:** 食品オブジェクトの配列。ユーザーが食品を一件も登録していない場合は空の配列 `[]` を返す。
@@ -185,11 +204,12 @@
 ]
 ```
 
-### POST /api/auth/foods
+### POST /api/foods
 
 ログイン中のユーザーが新しい食品を登録する。
 
 - **エンドポイント URL:** `POST /api/foods` (食品登録)
+
   - **リクエストヘッダー:** -`X-User-Id`: `number` (ログイン時に取得したユーザー ID)
 
   - **リクエストボディ:** 食品オブジェクトを送信。
@@ -254,7 +274,7 @@
 
 ```json
 {
-  "id": 105,
+  "id": 205,
   "name": "キャベツ",
   "category": "野菜",
   "quantity": 3,
@@ -263,11 +283,12 @@
   "memo": "サラダ用"
 }
 ```
+
 #### レスポンス例 3: `X-User-Id: 3`
 
 ```json
 {
-  "id": 105,
+  "id": 305,
   "name": "キャベツ",
   "category": "野菜",
   "quantity": 3,
@@ -277,12 +298,12 @@
 }
 ```
 
-
-### PUT /api/auth/foods/{id}
+### PUT /api/foods/{id}
 
 ログイン中のユーザーが食品を編集する。
 
-- **エンドポイント URL:** `PUT /api/foods/101` (編集id)
+- **エンドポイント URL:** `PUT /api/foods/101` (編集 id)
+
   - **リクエストヘッダー:** -`X-User-Id`: `number` (ログイン時に取得したユーザー ID)
 
   - **リクエストボディ:** 食品オブジェクトを送信。
@@ -347,7 +368,7 @@
 
 ```json
 {
-  "id": 101,
+  "id": 201,
   "name": "ジャガイモ",
   "category": "野菜",
   "quantity": 3,
@@ -356,11 +377,12 @@
   "memo": "ポテトサラダ用"
 }
 ```
+
 #### レスポンス例 3: `X-User-Id: 3`
 
 ```json
 {
-  "id": 101,
+  "id": 301,
   "name": "ジャガイモ",
   "category": "野菜",
   "quantity": 3,
@@ -370,102 +392,14 @@
 }
 ```
 
-### DELETE /api/auth/foods/{id}
+### DELETE /api/foods/{id}
 
 ログイン中のユーザーが食品を削除する。
 
-- **エンドポイント URL:** `DELETE /api/foods/101` (削除id)
+- **エンドポイント URL:** `DELETE /api/foods/101` (削除 id)
+
   - **リクエストヘッダー:** -`X-User-Id`: `number` (ログイン時に取得したユーザー ID)
+  - **リクエストボディ:** 空を渡す。
 
-  - **リクエストボディ:** 食品オブジェクトを送信。
-
-#### リクエスト例 1: `X-User-Id: 1`
-
-```json
-{
-  "name": "チーズ",
-  "category": "乳製品",
-  "quantity": 1,
-  "unit": "個",
-  "expiryDate": "2025-08-30",
-  "memo": "開封済み"
-}
-```
-
-#### リクエスト例 2: `X-User-Id: 2`
-
-```json
-{
-  "name": "チーズ",
-  "category": "乳製品",
-  "quantity": 1,
-  "unit": "個",
-  "expiryDate": "2025-08-30",
-  "memo": "開封済み"
-}
-```
-
-#### リクエスト例 3: `X-User-Id: 3`
-
-```json
-{
-  "name": "チーズ",
-  "category": "乳製品",
-  "quantity": 1,
-  "unit": "個",
-  "expiryDate": "2025-08-30",
-  "memo": "開封済み"
-}
-```
-
-- **成功レスポンス (200 OK):**
-  - **レスポンスボディ:** 編集された食品情報を返す。
-
-#### レスポンス例 1: `X-User-Id: 1`
-
-```json
-{
-  "id": 101,
-  "name": "ジャガイモ",
-  "category": "野菜",
-  "quantity": 3,
-  "unit": "個",
-  "expiryDate": "2025-09-15",
-  "memo": "ポテトサラダ用"
-}
-```
-
-#### レスポンス例 2: `X-User-Id: 2`
-
-```json
-{
-  "id": 101,
-  "name": "ジャガイモ",
-  "category": "野菜",
-  "quantity": 3,
-  "unit": "個",
-  "expiryDate": "2025-09-15",
-  "memo": "ポテトサラダ用"
-}
-```
-#### レスポンス例 3: `X-User-Id: 3`
-
-```json
-{
-  "id": 101,
-  "name": "ジャガイモ",
-  "category": "野菜",
-  "quantity": 3,
-  "unit": "個",
-  "expiryDate": "2025-09-15",
-  "memo": "ポテトサラダ用"
-}
-```
-
-- `PUT /api/foods/{foodId}` (食品更新)
-  - リクエスト: `{"name": "とろけるチーズ", "expiry_date": "2025-09-05"}`
-- `DELETE /api/foods/{id}` (食品削除)
-
-```
-
-```
+- **成功レスポンス (204 NO Content):**
+  - **レスポンスボディ:** 成功したことのみ伝える。
