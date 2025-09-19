@@ -1,0 +1,40 @@
+version: '3.8' # Docker Composeのバージョンを指定
+
+services:
+  # 1. Spring Boot アプリケーションサービス
+  app:
+    container_name: refrigerator-app # コンテナ名を指定
+    build:
+      context: ./backend # Dockerfileがあるディレクトリを指定
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # ホストの8080番ポートをコンテナの8080番ポートにマッピング
+    depends_on:
+      db:
+        condition: service_healthy # dbコンテナがhealthcheckをパスしてから起動
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/refrigerator_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+
+  # 2. MySQL データベースサービス
+  db:
+    image: mysql:8.0 # 使用するMySQLのDockerイメージを指定
+    container_name: refrigerator-db # コンテナ名を指定
+    ports:
+      - "3306:3306" # ホストの3306番ポートをコンテナの3306番ポートにマッピング
+    environment:
+      MYSQL_DATABASE: refrigerator_db # データベース名を指定
+      MYSQL_USER: user # ユーザー名を指定
+      MYSQL_PASSWORD: password # パスワードを指定
+      MYSQL_ROOT_PASSWORD: rootpassword # ルートユーザーのパスワードを指定
+    volumes:
+      - mysql-data:/var/lib/mysql # データを永続化するためのボリューム
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"] # 接続可能か定期的にチェック
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-data: # 名前付きボリュームの定義
