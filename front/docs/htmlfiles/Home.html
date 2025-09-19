@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冷蔵庫管理アプリ - 食品一覧</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen">
+    <!-- ヘッダー -->
+    <header class="bg-white/95 backdrop-blur-sm shadow-lg border-b border-white/20">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-br from-green-400 to-emerald-500 w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                        <span class="text-2xl">🥬</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">冷蔵庫管理</h1>
+                        <p class="text-sm text-gray-600">田中太郎さん</p>
+                    </div>
+                </div>
+                <button class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    ログアウト
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto p-4">
+        <!-- 統計カード -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">総食品数</p>
+                        <p class="text-3xl font-bold text-green-600">12</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-100 to-emerald-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">📦</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">期限切れ間近</p>
+                        <p class="text-3xl font-bold text-orange-500">3</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-100 to-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">⚠️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">期限切れ</p>
+                        <p class="text-3xl font-bold text-red-500">1</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-100 to-pink-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">🚨</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 検索・フィルター・追加ボタン -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="flex flex-col md:flex-row gap-4 flex-1">
+                    <!-- 検索バー -->
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            placeholder="食品名で検索..."
+                            class="w-full px-4 py-3 pl-10 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                            id="searchInput"
+                        >
+                        <span class="absolute left-3 top-3.5 text-gray-400">🔍</span>
+                    </div>
+                    
+                    <!-- カテゴリフィルター -->
+                    <select class="px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80" id="categoryFilter">
+                        <option value="">全カテゴリ</option>
+                        <option value="野菜">野菜</option>
+                        <option value="肉類">肉類</option>
+                        <option value="魚類">魚類</option>
+                        <option value="乳製品">乳製品</option>
+                        <option value="調味料">調味料</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                
+                <!-- 食品追加ボタン -->
+                <button 
+                    onclick="goToAddFood()"
+                    class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
+                >
+                    <span class="text-xl">➕</span>
+                    <span>食品を追加</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 食品一覧 -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800">食品一覧</h2>
+            </div>
+            
+            <div id="foodList" class="divide-y divide-gray-200">
+                <!-- 食品アイテム1 -->
+                <div class="p-6 hover:bg-green-50/50 transition-colors duration-200 food-item" data-category="野菜" data-name="にんじん">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-gradient-to-br from-orange-100 to-yellow-100 w-16 h-16 rounded-xl flex items-center justify-center shadow-md">
+                                <span class="text-3xl">🥕</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">にんじん</h3>
+                                <p class="text-sm text-gray-600">カテゴリ: 野菜</p>
+                                <p class="text-sm text-gray-600">数量: 3本</p>
+                                <p class="text-sm text-green-600 font-medium">賞味期限: 2024/01/15 (あと5日)</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button 
+                                onclick="editFood('carrot')"
+                                class="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                編集
+                            </button>
+                            <button 
+                                onclick="deleteFood('carrot')"
+                                class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                削除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 食品アイテム2 -->
+                <div class="p-6 hover:bg-green-50/50 transition-colors duration-200 food-item" data-category="乳製品" data-name="牛乳">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-gradient-to-br from-blue-100 to-cyan-100 w-16 h-16 rounded-xl flex items-center justify-center shadow-md">
+                                <span class="text-3xl">🥛</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">牛乳</h3>
+                                <p class="text-sm text-gray-600">カテゴリ: 乳製品</p>
+                                <p class="text-sm text-gray-600">数量: 1本</p>
+                                <p class="text-sm text-orange-600 font-medium">賞味期限: 2024/01/12 (あと2日)</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button 
+                                onclick="editFood('milk')"
+                                class="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                編集
+                            </button>
+                            <button 
+                                onclick="deleteFood('milk')"
+                                class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                削除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 食品アイテム3 -->
+                <div class="p-6 hover:bg-green-50/50 transition-colors duration-200 food-item" data-category="肉類" data-name="鶏むね肉">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-gradient-to-br from-pink-100 to-red-100 w-16 h-16 rounded-xl flex items-center justify-center shadow-md">
+                                <span class="text-3xl">🍗</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">鶏むね肉</h3>
+                                <p class="text-sm text-gray-600">カテゴリ: 肉類</p>
+                                <p class="text-sm text-gray-600">数量: 500g</p>
+                                <p class="text-sm text-red-600 font-medium">賞味期限: 2024/01/09 (期限切れ)</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button 
+                                onclick="editFood('chicken')"
+                                class="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                編集
+                            </button>
+                            <button 
+                                onclick="deleteFood('chicken')"
+                                class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                削除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 食品アイテム4 -->
+                <div class="p-6 hover:bg-green-50/50 transition-colors duration-200 food-item" data-category="野菜" data-name="レタス">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-gradient-to-br from-green-100 to-emerald-100 w-16 h-16 rounded-xl flex items-center justify-center shadow-md">
+                                <span class="text-3xl">🥬</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">レタス</h3>
+                                <p class="text-sm text-gray-600">カテゴリ: 野菜</p>
+                                <p class="text-sm text-gray-600">数量: 1玉</p>
+                                <p class="text-sm text-green-600 font-medium">賞味期限: 2024/01/20 (あと10日)</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button 
+                                onclick="editFood('lettuce')"
+                                class="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                編集
+                            </button>
+                            <button 
+                                onclick="deleteFood('lettuce')"
+                                class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                            >
+                                削除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空の状態（検索結果なし） -->
+        <div id="emptyState" class="hidden bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-12 text-center">
+            <div class="bg-gradient-to-br from-gray-100 to-gray-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-4xl">🔍</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">該当する食品が見つかりません</h3>
+            <p class="text-gray-500">検索条件を変更してお試しください</p>
+        </div>
+    </div>
+
+    <!-- 食品登録ポップアップ -->
+    <div id="addFoodPopup" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-end p-4">
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 w-full max-w-md h-full max-h-[90vh] overflow-y-auto transform transition-all duration-300">
+            <!-- ヘッダー -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-green-400 to-emerald-500 w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-xl">➕</span>
+                        </div>
+                        <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">食品を登録</h2>
+                    </div>
+                    <button 
+                        onclick="closeAddFoodPopup()"
+                        class="bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+                    >
+                        <span class="text-gray-600">✕</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- フォーム -->
+            <form id="addFoodForm" onsubmit="submitAddFood(event)" class="p-6 space-y-6">
+                <!-- 食品名 -->
+                <div>
+                    <label for="foodName" class="block text-sm font-medium text-gray-700 mb-2">
+                        食品名 <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="foodName" 
+                        name="foodName"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        placeholder="例: にんじん"
+                        required
+                    >
+                </div>
+
+                <!-- カテゴリ -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                        カテゴリ <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="category" 
+                        name="category"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        required
+                    >
+                        <option value="">カテゴリを選択</option>
+                        <option value="野菜">🥕 野菜</option>
+                        <option value="肉類">🍗 肉類</option>
+                        <option value="魚類">🐟 魚類</option>
+                        <option value="乳製品">🥛 乳製品</option>
+                        <option value="調味料">🧂 調味料</option>
+                        <option value="その他">📦 その他</option>
+                    </select>
+                </div>
+
+                <!-- 数量と単位 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">
+                            数量 <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="number" 
+                            id="quantity" 
+                            name="quantity"
+                            min="0.1"
+                            step="0.1"
+                            class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                            placeholder="1"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">
+                            単位 <span class="text-red-500">*</span>
+                        </label>
+                        <select 
+                            id="unit" 
+                            name="unit"
+                            class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                            required
+                        >
+                            <option value="">単位を選択</option>
+                            <option value="個">個</option>
+                            <option value="本">本</option>
+                            <option value="玉">玉</option>
+                            <option value="袋">袋</option>
+                            <option value="パック">パック</option>
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                            <option value="ml">ml</option>
+                            <option value="L">L</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 賞味期限 -->
+                <div>
+                    <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        賞味期限 <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="date" 
+                        id="expiryDate" 
+                        name="expiryDate"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        required
+                    >
+                </div>
+
+                <!-- メモ -->
+                <div>
+                    <label for="memo" class="block text-sm font-medium text-gray-700 mb-2">
+                        メモ（任意）
+                    </label>
+                    <textarea 
+                        id="memo" 
+                        name="memo"
+                        rows="3"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80 resize-none"
+                        placeholder="保存場所や特記事項など..."
+                    ></textarea>
+                </div>
+
+                <!-- 成功メッセージ（非表示） -->
+                <div id="successMessage" class="hidden p-4 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 text-green-800 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <span class="mr-2">✅</span>
+                        <span>食品を登録しました！</span>
+                    </div>
+                </div>
+
+                <!-- ボタン -->
+                <div class="flex space-x-3 pt-4">
+                    <button 
+                        type="button"
+                        onclick="closeAddFoodPopup()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200"
+                    >
+                        キャンセル
+                    </button>
+                    <button 
+                        type="submit"
+                        class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        登録する
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 食品編集ポップアップ -->
+    <div id="editFoodPopup" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-end p-4">
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 w-full max-w-md h-full max-h-[90vh] overflow-y-auto transform transition-all duration-300">
+            <!-- ヘッダー -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-blue-400 to-cyan-500 w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-xl">✏️</span>
+                        </div>
+                        <h2 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">食品を編集</h2>
+                    </div>
+                    <button 
+                        onclick="closeEditFoodPopup()"
+                        class="bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+                    >
+                        <span class="text-gray-600">✕</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- フォーム -->
+            <form id="editFoodForm" onsubmit="submitEditFood(event)" class="p-6 space-y-6">
+                <!-- 食品名 -->
+                <div>
+                    <label for="editFoodName" class="block text-sm font-medium text-gray-700 mb-2">
+                        食品名 <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="editFoodName" 
+                        name="foodName"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        placeholder="例: にんじん"
+                        required
+                    >
+                </div>
+
+                <!-- カテゴリ -->
+                <div>
+                    <label for="editCategory" class="block text-sm font-medium text-gray-700 mb-2">
+                        カテゴリ <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="editCategory" 
+                        name="category"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        required
+                    >
+                        <option value="">カテゴリを選択</option>
+                        <option value="野菜">🥕 野菜</option>
+                        <option value="肉類">🍗 肉類</option>
+                        <option value="魚類">🐟 魚類</option>
+                        <option value="乳製品">🥛 乳製品</option>
+                        <option value="調味料">🧂 調味料</option>
+                        <option value="その他">📦 その他</option>
+                    </select>
+                </div>
+
+                <!-- 数量と単位 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="editQuantity" class="block text-sm font-medium text-gray-700 mb-2">
+                            数量 <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="number" 
+                            id="editQuantity" 
+                            name="quantity"
+                            min="0.1"
+                            step="0.1"
+                            class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                            placeholder="1"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="editUnit" class="block text-sm font-medium text-gray-700 mb-2">
+                            単位 <span class="text-red-500">*</span>
+                        </label>
+                        <select 
+                            id="editUnit" 
+                            name="unit"
+                            class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                            required
+                        >
+                            <option value="">単位を選択</option>
+                            <option value="個">個</option>
+                            <option value="本">本</option>
+                            <option value="玉">玉</option>
+                            <option value="袋">袋</option>
+                            <option value="パック">パック</option>
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                            <option value="ml">ml</option>
+                            <option value="L">L</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 賞味期限 -->
+                <div>
+                    <label for="editExpiryDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        賞味期限 <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="date" 
+                        id="editExpiryDate" 
+                        name="expiryDate"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80"
+                        required
+                    >
+                </div>
+
+                <!-- メモ -->
+                <div>
+                    <label for="editMemo" class="block text-sm font-medium text-gray-700 mb-2">
+                        メモ（任意）
+                    </label>
+                    <textarea 
+                        id="editMemo" 
+                        name="memo"
+                        rows="3"
+                        class="w-full px-4 py-3 border-2 border-green-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-200 bg-white/80 resize-none"
+                        placeholder="保存場所や特記事項など..."
+                    ></textarea>
+                </div>
+
+                <!-- 成功メッセージ（非表示） -->
+                <div id="editSuccessMessage" class="hidden p-4 bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-blue-300 text-blue-800 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <span class="mr-2">✅</span>
+                        <span>食品を更新しました！</span>
+                    </div>
+                </div>
+
+                <!-- ボタン -->
+                <div class="flex space-x-3 pt-4">
+                    <button 
+                        type="button"
+                        onclick="closeEditFoodPopup()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors duration-200"
+                    >
+                        キャンセル
+                    </button>
+                    <button 
+                        type="submit"
+                        class="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        更新する
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 食品追加画面への遷移
+        function goToAddFood() {
+            document.getElementById('addFoodPopup').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // スクロール無効化
+        }
+
+        // ポップアップを閉じる
+        function closeAddFoodPopup() {
+            document.getElementById('addFoodPopup').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // スクロール有効化
+            document.getElementById('addFoodForm').reset();
+        }
+
+        // 食品登録処理
+        function submitAddFood(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const foodData = {
+                name: formData.get('foodName'),
+                category: formData.get('category'),
+                quantity: formData.get('quantity'),
+                unit: formData.get('unit'),
+                expiryDate: formData.get('expiryDate'),
+                memo: formData.get('memo')
+            };
+            
+            // 成功メッセージを表示
+            document.getElementById('successMessage').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.add('hidden');
+                closeAddFoodPopup();
+                // 実際のアプリでは食品一覧を更新
+                alert(`${foodData.name}を登録しました！`);
+            }, 2000);
+        }
+
+        // 食品編集画面への遷移
+        function editFood(foodId) {
+            // データベースから食品情報を取得（モック）
+            const mockFoodData = {
+                'carrot': { name: 'にんじん', category: '野菜', quantity: 3, unit: '本', expiryDate: '2024-01-15', memo: '冷蔵庫の野菜室に保存' },
+                'milk': { name: '牛乳', category: '乳製品', quantity: 1, unit: '本', expiryDate: '2024-01-12', memo: '' },
+                'chicken': { name: '鶏むね肉', category: '肉類', quantity: 500, unit: 'g', expiryDate: '2024-01-09', memo: '冷凍庫で保存' },
+                'lettuce': { name: 'レタス', category: '野菜', quantity: 1, unit: '玉', expiryDate: '2024-01-20', memo: '' }
+            };
+
+            const foodData = mockFoodData[foodId];
+            if (foodData) {
+                // フォームに既存データを設定
+                document.getElementById('editFoodName').value = foodData.name;
+                document.getElementById('editCategory').value = foodData.category;
+                document.getElementById('editQuantity').value = foodData.quantity;
+                document.getElementById('editUnit').value = foodData.unit;
+                document.getElementById('editExpiryDate').value = foodData.expiryDate;
+                document.getElementById('editMemo').value = foodData.memo;
+                
+                // 編集中の食品IDを保存
+                document.getElementById('editFoodForm').dataset.foodId = foodId;
+                
+                // ポップアップを表示
+                document.getElementById('editFoodPopup').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // 編集ポップアップを閉じる
+        function closeEditFoodPopup() {
+            document.getElementById('editFoodPopup').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('editFoodForm').reset();
+        }
+
+        // 食品編集処理
+        function submitEditFood(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const foodId = event.target.dataset.foodId;
+            const foodData = {
+                id: foodId,
+                name: formData.get('foodName'),
+                category: formData.get('category'),
+                quantity: formData.get('quantity'),
+                unit: formData.get('unit'),
+                expiryDate: formData.get('expiryDate'),
+                memo: formData.get('memo')
+            };
+            
+            // 成功メッセージを表示
+            document.getElementById('editSuccessMessage').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('editSuccessMessage').classList.add('hidden');
+                closeEditFoodPopup();
+                // 実際のアプリでは食品一覧を更新
+                alert(`${foodData.name}を更新しました！`);
+            }, 2000);
+        }
+
+        // 食品削除
+        function deleteFood(foodId) {
+            if (confirm('この食品を削除しますか？')) {
+                alert(`食品を削除しました (ID: ${foodId})`);
+                // 実際のアプリでは削除処理を実行
+            }
+        }
+
+        // 検索機能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            filterFoods();
+        });
+
+        // カテゴリフィルター
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            filterFoods();
+        });
+
+        function filterFoods() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            const foodItems = document.querySelectorAll('.food-item');
+            let visibleCount = 0;
+
+            foodItems.forEach(item => {
+                const foodName = item.dataset.name.toLowerCase();
+                const foodCategory = item.dataset.category;
+                
+                const matchesSearch = foodName.includes(searchTerm);
+                const matchesCategory = !selectedCategory || foodCategory === selectedCategory;
+                
+                if (matchesSearch && matchesCategory) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 空の状態を表示/非表示
+            const foodList = document.getElementById('foodList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (visibleCount === 0) {
+                foodList.parentElement.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                foodList.parentElement.style.display = 'block';
+                emptyState.style.display = 'none';
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9737ee0461c6d3ca',t:'MTc1NTkyNDAwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

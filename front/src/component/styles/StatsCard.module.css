@@ -1,0 +1,62 @@
+.value-text {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem; /* text-3xl のデフォルト line-height */
+  font-weight: 700; /* font-bold */
+  color: rgb(8, 162, 90);
+}
+
+.icon-container {
+  background-image: linear-gradient(
+    to bottom right,
+    #dcfce7,
+    #d1fae5
+  ); /* from-green-100 to-emerald-100 */
+  width: 3rem; /* w-12 */
+  height: 3rem; /* h-12 */
+  border-radius: 9999px; /* rounded-full */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  justify-content: center; /* justify-center */
+}
+
+.value-text {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem; /* text-3xl のデフォルト line-height */
+  font-weight: 700; /* font-bold */
+  color: #f97316; /* text-orange-500 */
+}
+
+.icon-container {
+  background-image: linear-gradient(
+    to bottom right,
+    #ffedd5,
+    #fef9c3
+  ); /* from-orange-100 to-yellow-100 */
+  width: 3rem; /* w-12 */
+  height: 3rem; /* h-12 */
+  border-radius: 9999px; /* rounded-full */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  justify-content: center; /* justify-center */
+}
+
+.value-text {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem; /* Tailwindのtext-3xlに対応 */
+  font-weight: 700; /* font-bold */
+  color: #ef4444; /* text-red-500 */
+}
+
+.icon-container {
+  background-image: linear-gradient(
+    to bottom right,
+    #fee2e2,
+    #fce7f3
+  ); /* from-red-100 to-pink-100 */
+  width: 3rem; /* w-12 */
+  height: 3rem; /* h-12 */
+  border-radius: 9999px; /* rounded-full */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  justify-content: center; /* justify-center */
+}

@@ -1,0 +1,196 @@
+
+/* --- ポップアップ --- */
+.popupOverlay {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.popupContent {
+    background-color: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+    max-width: 28rem;
+    height: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+}
+
+.visible {
+    transform: translateX(0);
+}
+
+/* --- ヘッダー --- */
+.header {
+    position: sticky;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* space-x-3 */
+}
+
+.headerIcon {
+    background-image: linear-gradient(to bottom right, #60a5fa, #06b6d4);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.headerIcon span {
+    font-size: 1.25rem;
+}
+
+.headerTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background-image: linear-gradient(to right, #2563eb, #0891b2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.closeButton {
+    background-color: #f3f4f6;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 200ms;
+    border: none;
+    cursor: pointer;
+}
+.closeButton:hover {
+    background-color: #e5e7eb;
+}
+.closeButton span {
+    color: #4b5563;
+}
+
+/* --- フォーム --- */
+.form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* space-y-6 */
+}
+
+.formLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.requiredMark {
+    color: #ef4444;
+}
+
+.formInput, .formSelect, .formTextarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #bbf7d0;
+    border-radius: 0.75rem;
+    transition: all 200ms;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.formInput:focus, .formSelect:focus, .formTextarea:focus {
+    outline: none;
+    border-color: #4ade80;
+    box-shadow: 0 0 0 4px #bbf7d0; /* ring-4 ring-green-200 */
+}
+
+.formTextarea {
+    resize: none;
+}
+
+.inputGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+/* --- メッセージとボタン --- */
+.successMessage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* mr-2 */
+    padding: 1rem;
+    background-image: linear-gradient(to right, #dbeafe, #cffafe);
+    border: 2px solid #93c5fd;
+    color: #1e40af;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 0.75rem; /* space-x-3 */
+    padding-top: 1rem;
+}
+
+.button {
+    flex: 1;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    transition: all 200ms;
+    border: none;
+    cursor: pointer;
+}
+
+.buttonCancel {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+.buttonCancel:hover {
+    background-color: #d1d5db;
+}
+
+.buttonSubmit {
+    background-image: linear-gradient(to right, #3b82f6, #0891b2);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+.buttonSubmit:hover {
+    background-image: linear-gradient(to right, #2563eb, #0e7490);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+.buttonSubmit:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #bfdbfe; /* ring-4 ring-blue-200 */
+}

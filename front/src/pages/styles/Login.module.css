@@ -1,0 +1,331 @@
+/* Login.module.css */
+
+.loginContainer {
+  position: relative;
+  background-image: linear-gradient(to bottom right, #34d399, #6ee7b7, #34d399);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.forgotPasswordOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.forgotPasswordContent {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 28rem;
+  padding: 1.5rem;
+}
+
+.statusOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.statusMessage {
+  padding: 1.5rem;
+  border-width: 2px;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.statusSuccess {
+  background-image: linear-gradient(to right, #d1fae5, #a7f3d0);
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+
+.statusError {
+  background-image: linear-gradient(to right, #ffedd5, #fed7aa);
+  border-color: #fdba74;
+  color: #9a3412;
+}
+
+.statusLoading {
+  background-image: linear-gradient(to right, #f3f4f6, #e5e7eb);
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.form {
+  margin-top: 1rem;
+}
+
+.form > *:not(:first-child) {
+    margin-top: 1rem;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border-width: 2px;
+  border-radius: 0.75rem;
+  transition: all 200ms;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.inputField:focus {
+    outline: none;
+}
+
+.inputFieldOrange {
+  border-color: #fed7aa;
+}
+
+.inputFieldOrange:focus {
+    border-color: #fb923c;
+    box-shadow: 0 0 0 4px #fed7aa;
+}
+
+.inputFieldGreen {
+  border-color: #bbf7d0;
+}
+
+.inputFieldGreen:focus {
+    border-color: #4ade80;
+    box-shadow: 0 0 0 4px #bbf7d0;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.generalErrorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.cancelButton {
+  flex: 1;
+  background-color: #e5e7eb;
+  color: #374151;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: background-color 200ms;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+    background-color: #d1d5db;
+}
+
+.submitButton {
+  flex: 1;
+  background-image: linear-gradient(to right, #f97316, #ef4444);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: all 200ms;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton:hover {
+    background-image: linear-gradient(to right, #ea580c, #dc2626);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.submitButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #fed7aa;
+}
+
+.demoInfoContainer {
+  width: 100%;
+  max-width: 28rem;
+  margin-bottom: 1rem;
+  background-color: #dbeafe;
+  border: 2px solid #93c5fd;
+  color: #1e40af;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+}
+
+@media (min-width: 1024px) {
+  .demoInfoContainer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+
+.demoInfoContent {
+  font-size: 0.875rem;
+}
+
+.demoInfoHeader {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.loginFormContainer {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+}
+
+.loginForm {
+  margin-top: 1.5rem;
+}
+
+.loginForm > *:not(:first-child) {
+    margin-top: 1.25rem;
+}
+
+.forgotPasswordLink {
+  font-size: 0.875rem;
+  color: #059669;
+  font-weight: 500;
+}
+
+.forgotPasswordLink:hover {
+    color: #047857;
+}
+
+.loginButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.loginButton {
+  width: 70%;
+  background-image: linear-gradient(to right, #10b981, #059669);
+  color: white;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 200ms;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.loginButton:hover {
+    background-image: linear-gradient(to right, #059669, #047857);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.loginButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #bbf7d0;
+}
+
+.loginButton:disabled {
+  background-image: none;
+  background-color: #9ca3af;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.dividerContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.divider {
+  flex: 1;
+  border-top: 1px solid #d1d5db;
+}
+
+.dividerText {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.registerContainer {
+  text-align: center;
+}
+
+.registerText {
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.registerButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.registerButton {
+  width: 70%;
+  background-image: linear-gradient(to right, #3b82f6, #0ea5e9);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 200ms;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.registerButton:hover {
+    background-image: linear-gradient(to right, #2563eb, #0284c7);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.registerButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #bfdbfe;
+}
