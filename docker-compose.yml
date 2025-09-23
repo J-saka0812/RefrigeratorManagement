@@ -31,7 +31,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql # データを永続化するためのボリューム
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"] # 接続可能か定期的にチェック
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ] # 接続可能か定期的にチェック
       interval: 10s
       timeout: 5s
       retries: 5
