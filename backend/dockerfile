@@ -1,4 +1,31 @@
+# --- ステージ1: ビルド環境 ---
+# MavenとJavaが使える公式イメージを「ビルダー」として使う
+FROM maven:3.8.4-openjdk-17 AS builder
+
+# 作業ディレクトリを作成
+WORKDIR /app
+
+# まずpom.xmlをコピーして、依存関係だけ先にダウンロードする（キャッシュを効かせるため）
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# すべてのソースコードをコピーする
+COPY src ./src
+
+# Mavenを使ってアプリケーションをビルドし、jarファイルを作成する
+RUN mvn package -DskipTests
+
+
+# --- ステージ2: 実行環境 ---
+# 実行に必要なJavaだけが入った軽量なイメージを使う
 FROM openjdk:17-jdk-slim
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+# 作業ディレクトリを作成
+WORKDIR /app
+
+# ★★★ここが重要★★★
+# ステージ1(builder)でビルドされたjarファイルだけを、この新しいコンテナにコピーする
+COPY --from=builder /app/target/*.jar app.jar
+
+# コンテナ起動時にjarファイルを実行する
+ENTRYPOINT ["java","-jar","app.jar"]
