@@ -4,8 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,19 +29,33 @@ public class FoodController {
     this.foodRepository = foodRepository;
   }
 
-  @GetMapping///api/foods というURLに対する GET リクエストが来た場合に、このgetAllFoods()メソッドが呼び出される
-  public List<Food> getAllFoods(){
-    return foodRepository.findAll(); //リポジトリを使って、データベースから全件取得する
+  @GetMapping /// api/foods というURLに対する GET リクエストが来た場合に、このgetAllFoods()メソッドが呼び出される
+  public List<Food> getAllFoods() {
+    return foodRepository.findAll(); // リポジトリを使って、データベースから全件取得する
     // 自動的にSELECT * FROM foods; に相当するSQLが実行され、取得した全データがFoodオブジェクトのリスト(List<Food>)に入る
   }
 
   // POSTリクエスト (http://localhost:8080/api/foods) に対応
   @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)// 成功した場合、HTTPステータスコード201 (Created) を返す
-  //@RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
-  public Food createFood(@RequestBody Food newFood){
-     // リクエストのJSONボディをFoodオブジェクトに変換し、データベースに保存
+  @ResponseStatus(HttpStatus.CREATED) // 成功した場合、HTTPステータスコード201 (Created) を返す
+  // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
+  public Food createFood(@RequestBody Food newFood) {
+    // リクエストのJSONボディをFoodオブジェクトに変換し、データベースに保存
     return foodRepository.save(newFood);
-    //save(): 渡されたオブジェクトをデータベースに保存（INSERTまたはUPDATE）し、IDが採番された後の最新のオブジェクトを返す
+    // save(): 渡されたオブジェクトをデータベースに保存（INSERTまたはUPDATE）し、IDが採番された後の最新のオブジェクトを返す
+  }
+
+  @PutMapping("/{id}")
+  public Food updateFood(@PathVariable Long id, @RequestBody Food foodDetails) {
+    // 受け取ったデータでそのまま保存（上書き）
+    foodDetails.setId(id);// URLのIDをオブジェクトにセット
+    return foodRepository.save(foodDetails);
+  }
+
+  // DELETEリクエスト (http://localhost:8080/api/foods/{id})
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteFood(@PathVariable Long id) {
+    foodRepository.deleteById(id);
+    return ResponseEntity.noContent().build();// 成功時、204 No Contentを返す
   }
 }
