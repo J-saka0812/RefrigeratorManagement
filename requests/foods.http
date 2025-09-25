@@ -1,0 +1,36 @@
+### 食品一覧をすべて取得　/###: これでリクエスト一つを区切ることで、1つのファイルに複数のリクエストを記述できる
+GET http://localhost:8080/api/foods
+
+### 新しい食品の登録  /POST http: POSTリクエストの場合は、ヘッダー（Content-Type）や空行を挟んでリクエストボディ（JSONデータ）を記述
+POST http://localhost:8080/api/foods
+Content-Type: application/json
+//HTTPのプロトコル（通信ルール）では、「ヘッダーのブロックが終わったら、必ず一行の空行を挟んでから、ボディのブロックを始めること」と厳密に定められていいる
+
+{
+    "name": "牛乳",
+    "expirationDate": "2025-09-30",
+    "quantity": 1
+}
+
+### 別の食品を登録
+POST http://localhost:8080/api/foods
+Content-Type: application/json
+
+{
+    "name": "たまご",
+    "expirationDate": "2025-10-05",
+    "quantity": 10
+}
+
+### 食品の更新
+PUT http://localhost:8080/api/foods/1
+Content-Type: application/json
+
+{
+    "name": "牛乳",
+    "expirationDate": "2025-09-30",
+    "quantity": 2
+}
+
+### 食品の削除
+DELETE http://localhost:8080/api/foods/2
