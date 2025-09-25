@@ -1,4 +1,4 @@
-package dev.jsaka.refrigerator_app;
+package dev.jsaka.refrigeratorapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

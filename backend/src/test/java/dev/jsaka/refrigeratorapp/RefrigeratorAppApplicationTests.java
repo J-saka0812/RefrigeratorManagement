@@ -1,4 +1,4 @@
-package dev.jsaka.refrigerator_app;
+package dev.jsaka.refrigeratorapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
