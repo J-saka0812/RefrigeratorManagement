@@ -1,5 +1,3 @@
-version: '3.8' # Docker Composeのバージョンを指定
-
 services:
   # 1. Spring Boot アプリケーションサービス
   app:
