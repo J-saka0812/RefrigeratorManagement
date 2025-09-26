@@ -33,4 +33,14 @@ Content-Type: application/json
 }
 
 ### 食品の削除
-DELETE http://localhost:8080/api/foods/2
+DELETE http://localhost:8080/api/foods/1
+
+
+### 食品1件の取得
+GET http://localhost:8080/api/foods/4
+Content-Type: application/json
+
+
+### 食品１件取得(失敗)
+GET http://localhost:8080/api/foods/999
+Content-Type: application/json
