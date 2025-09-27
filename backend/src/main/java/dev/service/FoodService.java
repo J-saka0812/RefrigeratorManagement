@@ -49,6 +49,7 @@ public class FoodService {
 
   // IDを指定して食品を1件取得するメソッド
   public Food findById(Long id) {
+    // throw new NullPointerException();//500エラー用テストコード
     return foodRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " + id));
   }

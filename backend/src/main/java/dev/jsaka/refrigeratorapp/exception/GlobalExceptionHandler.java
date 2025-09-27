@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
   }
 
+
   // 上記以外の、予期せぬ全ての例外(Exception.class)をキャッチする
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleAllExceptions(
