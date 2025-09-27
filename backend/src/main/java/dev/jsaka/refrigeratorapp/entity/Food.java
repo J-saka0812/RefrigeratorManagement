@@ -2,6 +2,7 @@ package dev.jsaka.refrigeratorapp.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,8 +13,8 @@ import jakarta.persistence.Table;
 @Table(name = "foods") // ② 対応するテーブル名を指定
 public class Food {
 
-    @Id // ③ このフィールドが主キーであることを示す
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ④ IDが自動採番されることを示す
+    @Id // このフィールドが主キーであることを示す
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // IDが自動採番されることを示す
     private Long id;// int型だとnullではなく0になるのでラッパークラスのLongでnull参照できるようにしている
     // 一度intで作成しリソースの枯渇が発生するとその後の改修が困難になるため、大規模ECサイト等で主キーを設定する場合は、Long型がベストプラクティス
     private String name;
@@ -22,7 +23,18 @@ public class Food {
 
     private Integer quantity;
 
-    // ⑤ JPAが必要とするため、引数なしのコンストラクタを必ず作る
+    @Column(nullable = false) // DB側でNOT NULL制約を付ける
+    private Long userId;
+
+    public Long getUserId(){
+        return userId;
+    }
+
+    public Long setUserId(Long userId){
+        return this.userId = userId;
+    }
+
+    // JPAが必要とするため、引数なしのコンストラクタを必ず作る
     public Food() {
     }
 
