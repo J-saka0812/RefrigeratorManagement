@@ -17,18 +17,22 @@ public class FoodService {
     this.foodRepository = foodRepository;
   }
 
-  public List<Food> findAll() {
-    return foodRepository.findAll();
+// ストリームを使って特定のuserIdを持つものだけをフィルタリングする
+  public List<Food> findAllByUserId(Long userId) {
+    return foodRepository.findAll().stream()
+        .filter(food -> food.getUserId().equals(userId))
+        .toList();
   }
 
-  public Food create(Food food) {
+  public Food create(Food food, Long userId) {
     food.setId(null);
+    food.setUserId(userId); // 誰の食品かを記録する
     return foodRepository.save(food);
   }
 
-  public Food update(Long id, Food foodDetails) {
-    // まず、更新対象のFoodがデータベースに存在するかを確認する
-    Food existingFood = findById(id);
+  public Food update(Long id, Food foodDetails, Long userId) {
+    // まず、更新対象のFoodがデータベースに存在するかを確認する(userId指定)
+    Food existingFood = findByIdAndUserId(id, userId);
 
     // 存在するFoodエンティティの各フィールドを、リクエストされた内容で更新する
     existingFood.setName(foodDetails.getName());
@@ -39,18 +43,24 @@ public class FoodService {
     return foodRepository.save(existingFood);
   }
 
-  public void delete(Long id) {
-    // まず、削除対象のFoodがデータベースに存在するかを確認する
-    Food existingFood = findById(id);
+  public void delete(Long id, Long userId) {
+    // まず、削除対象のFoodがデータベースに存在するかを確認する(userId指定)
+    Food existingFood = findByIdAndUserId(id, userId);
 
     // 存在すれば削除を実行
     foodRepository.delete(existingFood);
   }
 
-  // IDを指定して食品を1件取得するメソッド
-  public Food findById(Long id) {
-    // throw new NullPointerException();//500エラー用テストコード
-    return foodRepository.findById(id)
+  // IDを指定して食品を1件取得するメソッド(userIdも一緒に特定)
+  public Food findByIdAndUserId(Long id, Long userId) {
+    Food food = foodRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " + id));
+
+    // IDで見つかった食品が、本当にそのユーザーの物かをチェックする
+    if (!food.getUserId().equals(userId)) {
+      // 他人の食品にアクセスしようとした場合も「見つからない」として扱うのが一般的
+      throw new ResourceNotFoundException("Food not found with id: " + id);
+    }
+    return food;
   }
 }
