@@ -1,9 +1,24 @@
-### 食品一覧をすべて取得　/###: これでリクエスト一つを区切ることで、1つのファイルに複数のリクエストを記述できる
-GET http://localhost:8080/api/foods
+// @baseUrl 変数を定義しておくと、毎回 "http://localhost:8080" と書かなくて済む
+@baseUrl = http://localhost:8080/api/foods
 
-### 新しい食品の登録  /POST http: POSTリクエストの場合は、ヘッダー（Content-Type）や空行を挟んでリクエストボディ（JSONデータ）を記述
-POST http://localhost:8080/api/foods
+// @変数名 を定義する
+@userId1 = 1
+@userId2 = 2
+@userId3 = 3
+
+### userId1の食品一覧をすべて取得 /###: これでリクエスト一つを区切ることで、1つのファイルに複数のリクエストを記述できる
+GET {{baseUrl}}
+X-User-Id: {{userId1}}
+
+
+### userID2の食品一覧を取得
+GET {{baseUrl}}
+X-User-Id: {{userId2}}
+
+### user1に新しい食品の登録  /POST http: POSTリクエストの場合は、ヘッダー（Content-Type）や空行を挟んでリクエストボディ（JSONデータ）を記述
+POST {{baseUrl}}
 Content-Type: application/json
+X-User-Id: {{userId1}}
 //HTTPのプロトコル（通信ルール）では、「ヘッダーのブロックが終わったら、必ず一行の空行を挟んでから、ボディのブロックを始めること」と厳密に定められていいる
 
 {
@@ -12,9 +27,28 @@ Content-Type: application/json
     "quantity": 1
 }
 
-### 別の食品を登録
-POST http://localhost:8080/api/foods
+{%
+// レスポンスを受け取った直後にこのスクリプトが実行される
+// "foodIdForUser1" という名前のグローバル変数に、レスポンスボディのidをセットする
+client.global.set("foodIdForUser1", response.body.id);
+%}
+
+### user2が食品を登録する
+POST {{baseUrl}}
 Content-Type: application/json
+X-User-Id: {{userId2}}
+
+{
+    "name": "ユーザー2のトマト",
+    "expirationDate": "2025-10-12",
+    "quantity": 5
+}
+
+### user1に別の食品を登録
+POST {{baseUrl}}
+Content-Type: application/json
+X-User-Id: {{userId1}}
+# @name createUser1Food
 
 {
     "name": "たまご",
@@ -22,9 +56,10 @@ Content-Type: application/json
     "quantity": 10
 }
 
-### 食品の更新
-PUT http://localhost:8080/api/foods/1
+### user1の食品の更新
+PUT {{baseUrl}}/8
 Content-Type: application/json
+X-User-Id: {{userId1}}
 
 {
     "name": "牛乳",
@@ -32,15 +67,31 @@ Content-Type: application/json
     "quantity": 2
 }
 
-### 食品の削除
-DELETE http://localhost:8080/api/foods/1
+### user1の食品の削除
+DELETE {{baseUrl}}/8
+x-User-Id: {{userId1}}
 
-
-### 食品1件の取得
-GET http://localhost:8080/api/foods/4
+### user1の食品1件の取得
+GET {{baseUrl}}/4
 Content-Type: application/json
+x-User-Id: {{userId1}}
 
 
-### 食品１件取得(失敗)
-GET http://localhost:8080/api/foods/999
+### user1の食品1件取得(失敗)
+GET {{baseUrl}}/999
 Content-Type: application/json
+x-User-Id: {{userId1}}
+
+
+### 【重要】ユーザー2が、ユーザー1の食品を更新しようとする
+# → FoodServiceで権限チェックをしているため、404 Not Foundが返ってくるはず
+# ※ {{userId1FoodId}} には、最初に登録した "ユーザー1の牛乳" のIDを入れてください
+PUT {{baseUrl}}/9
+Content-Type: application/json
+X-User-Id: {{userId2}}
+
+{
+    "name": "ユーザー2が更新しようとした牛乳",
+    "expirationDate": "2025-10-10",
+    "quantity": 1
+}
