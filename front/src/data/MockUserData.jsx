@@ -17,8 +17,8 @@ export const mockUserData = [
         <path d="M32,104a32,32 0 0 1 64,0Z" fill="white" />
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#4A90E2" />
-            <stop offset="100%" stop-color="#7B61FF" />
+            <stop offset="0%" stopColor="#4A90E2" />
+            <stop offset="100%" stopColor="#7B61FF" />
           </linearGradient>
         </defs>
       </svg>
@@ -43,8 +43,8 @@ export const mockUserData = [
 
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FF5F9E" />
-            <stop offset="100%" stop-color="#FFB6C1" />
+            <stop offset="0%" stopColor="#FF5F9E" />
+            <stop offset="100%" stopColor="#FFB6C1" />
           </linearGradient>
         </defs>
       </svg>
@@ -68,8 +68,8 @@ export const mockUserData = [
         <path d="M32,104a32,32 0 0 1 64,0Z" fill="white" />
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#8E2DE2" />
-            <stop offset="100%" stop-color="#C471ED" />
+            <stop offset="0%" stopColor="#8E2DE2" />
+            <stop offset="100%" stopColor="#C471ED" />
           </linearGradient>
         </defs>
       </svg>

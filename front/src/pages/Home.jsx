@@ -5,31 +5,27 @@ import { SearchBarContainer } from "component/SearchBarContainer";
 import { FoodList } from "component/FoodList";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "../const";
-import { mockUserData } from "../data/MockUserData";
+import { useAuth } from "../context/AuthContext";
 
 export function Home({ foods, onDelete, onSearch, onCategorize }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useAuth();
 
-  const navigatedUser = location.state?.user;
-
-  // 渡された情報がなければログイン画面に戻す
+  // currentUser がなければログイン画面に戻す
   useEffect(() => {
-    if (!navigatedUser) {
+    if (!currentUser) {
       navigate(ROUTES.LOGIN);
     }
-  }, [navigatedUser, navigate]);
+  }, [currentUser, navigate]);
 
-  // navigatedUser がない場合は、早期リターンして何も表示しない
-  if (!navigatedUser) {
+  console.log('【Home.jsx】受け取ったProps:', foods);
+
+  // currentUser がない場合は、早期リターンして何も表示しない
+  if (!currentUser) {
     return null;
   }
 
-  // mockUserDataから完全なユーザー情報（iconを含む）を検索
-  const fullUserData = navigatedUser
-    ? mockUserData.find((user) => user.userId === navigatedUser.userId)
-    : null;
-    
   const handleAdd = () => {
     navigate(ROUTES.FOOD_ADD, {
       state: { backgroundLocation: location },
@@ -70,7 +66,7 @@ export function Home({ foods, onDelete, onSearch, onCategorize }) {
 
   return (
     <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-3">
-      <Header user={fullUserData} onClick={() => navigate(ROUTES.LOGIN)} />
+      <Header user={currentUser} onClick={() => navigate(ROUTES.LOGIN)} />
       <StatsCards />
       <SearchBarContainer
         onAdd={handleAdd}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debug Fetch</title>
+</head>
+<body>
+  <h1>Checking API connection...</h1>
+  <p>Open the developer console (F12) to see the result.</p>
+  <script>
+    console.log("Sending request to http://localhost:8080/api/foods...");
+    fetch('http://localhost:8080/api/foods', {
+      headers: {
+        'X-User-Id': '1'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('✅ Success:', data);
+    })
+    .catch(error => {
+      console.error('❌ Error:', error);
+    });
+  </script>
+</body>
+</html>
