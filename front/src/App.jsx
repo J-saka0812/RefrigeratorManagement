@@ -4,10 +4,12 @@ import { Home } from "pages/Home";
 import { FoodAdd } from "pages/FoodAdd";
 import { FoodEdit } from "pages/FoodEdit";
 import { Login } from "pages/Login";
-import { Register } from "pages/Register"; 
+import { Register } from "pages/Register";
 import { CATEGORY_ICONS, ROUTES } from "./const";
 import { useEffect, useState } from "react";
 import mockFoodData from "./data/MockFoodData";
+import { fetchFoods } from "./api/FoodlistApi";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
   const [foods, setFoods] = useState([]);
@@ -16,10 +18,26 @@ function App() {
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
 
-  useEffect(() => {
-    // 本来はAPIから取得するが、今回はモックデータを使用
-    setFoods(mockFoodData);
-  }, []);
+  function App() {
+    const { currentUser } = useAuth(); // AuthContextからcurrentUserを取得
+    const [foods, setFoods] = useState([]);
+    // ... (他のstate)
+
+    useEffect(() => {
+      const loadFoods = async () => {
+        if (currentUser) {
+          const foodsData = await fetchFoods(currentUser.userId);
+          setFoods(foodsData);
+        } else {
+          setFoods([]); // ログアウト時などにリストをクリア
+        }
+      };
+
+      loadFoods();
+    }, [currentUser]); // currentUserが変わるたびに実行
+
+    // ... (残りのコード)
+  }
 
   // 食品追加処理
   const handleAddFood = (newFood) => {

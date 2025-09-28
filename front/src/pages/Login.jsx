@@ -10,9 +10,11 @@ import { ROUTES } from "../const";
 import { DemoInfo } from "component/DemoInfo";
 import { ToggleButton } from "component/ToggleButton";
 import styles from "./styles/Login.module.css";
+import { useAuth } from "../context/AuthContext";
 
 export function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // =========== Stateの整理 ===========
   const [formData, setFormData] = useState({
@@ -142,6 +144,7 @@ export function Login() {
 
       if (user) {
         // 3. ログイン成功時の処理
+        login(user); // ログイン成功時にユーザー情報をContextに保存
         setViewState((prev) => ({
           ...prev,
           status: "success",
@@ -150,8 +153,7 @@ export function Login() {
 
         // 1.5秒後にホームへ遷移
         setTimeout(() => {
-          const { icon, ...userToNavigate } = user;
-          navigate(ROUTES.HOME, { state: { user: userToNavigate } });
+          navigate(ROUTES.HOME);
         }, 1500);
       } else {
         // 4. 失敗時の処理
