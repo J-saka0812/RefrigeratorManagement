@@ -12,32 +12,25 @@ import { fetchFoods } from "./api/FoodlistApi";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
+  const { currentUser } = useAuth(); // AuthContextからcurrentUserを取得
   const [foods, setFoods] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState(""); // 検索キーワード用のstate
   const [categorizeKeyword, setCategorizeKeyword] = useState("");
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
 
-  function App() {
-    const { currentUser } = useAuth(); // AuthContextからcurrentUserを取得
-    const [foods, setFoods] = useState([]);
-    // ... (他のstate)
+  useEffect(() => {
+    const loadFoods = async () => {
+      if (currentUser) {
+        const foodsData = await fetchFoods(currentUser.userId);
+        setFoods(foodsData);
+      } else {
+        setFoods([]); // ログアウト時などにリストをクリア
+      }
+    };
 
-    useEffect(() => {
-      const loadFoods = async () => {
-        if (currentUser) {
-          const foodsData = await fetchFoods(currentUser.userId);
-          setFoods(foodsData);
-        } else {
-          setFoods([]); // ログアウト時などにリストをクリア
-        }
-      };
-
-      loadFoods();
-    }, [currentUser]); // currentUserが変わるたびに実行
-
-    // ... (残りのコード)
-  }
+    loadFoods();
+  }, [currentUser]); // currentUserが変わるたびに実行
 
   // 食品追加処理
   const handleAddFood = (newFood) => {
@@ -70,10 +63,20 @@ function App() {
   };
 
   // 表示する食品をフィルタリング
-  const filteredFoods = foods.filter((food) => {
-    const matchSearch = food.name.includes(searchKeyword);
-    const matchCategorize = food.category.includes(categorizeKeyword);
-    return matchSearch && matchCategorize;
+  // const filteredFoods = (foods || []).filter((food) => {
+  //   const matchSearch = food && food.name && food.name.includes(searchKeyword);
+  //   const matchCategorize = food && food.category && food.category.includes(categorizeKeyword);
+  //   return matchSearch && matchCategorize;
+  // });
+
+  const filteredFoods = (foods || []).filter((food) => {
+    // searchKeywordが空文字列の場合は、無条件でtrueを返し、全ての食品を表示する
+    if (searchKeyword === '') {
+      return true;
+    }
+    // searchKeywordが何か入力されている場合のみ、名前での絞り込みを行う
+    // toLowerCase()を使うことで、大文字・小文字を区別しない検索になる
+    return food.name.toLowerCase().includes(searchKeyword.toLowerCase());
   });
 
   return (
