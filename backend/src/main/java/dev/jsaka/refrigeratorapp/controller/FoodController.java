@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,40 +31,48 @@ public class FoodController {
   }
 
   @GetMapping /// api/foods というURLに対する GET リクエストが来た場合に、このgetAllFoods()メソッドが呼び出される
-  public List<Food> getAllFoods() {
-    return foodService.findAll(); // リポジトリを使って、データベースから全件取得する
+  public List<Food> getAllFoods(@RequestAttribute("userId") Long userId) {
+    return foodService.findAllByUserId(userId); // リポジトリを使って、データベースから全件取得する
     // 自動的にSELECT * FROM foods; に相当するSQLが実行され、取得した全データがFoodオブジェクトのリスト(List<Food>)に入る
   }
 
   // POSTリクエスト (http://localhost:8080/api/foods) に対応
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED) // 成功した場合、HTTPステータスコード201 (Created) を返す
-  // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
-  public ResponseEntity<Food> createFood(@RequestBody Food newFood) {
+  public ResponseEntity<Food> createFood(
+      @RequestBody Food food, // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
+      @RequestAttribute("userId") Long userId) {
     // リクエストのJSONボディをFoodオブジェクトに変換し、データベースに保存
-    Food createdFood = foodService.create(newFood);
+    Food createdFood = foodService.create(food, userId);
     // 201 Createdステータスで返すのがRESTfulな作法
     return new ResponseEntity<>(createdFood, HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Food> updateFood(@PathVariable Long id, @RequestBody Food foodDetails) {
+  public ResponseEntity<Food> updateFood(
+      @PathVariable Long id,
+      @RequestBody Food foodDetails,
+      @RequestAttribute("userId") Long userId) {
     // 受け取ったデータでそのまま保存（上書き）
-    Food updatedFood = foodService.update(id, foodDetails);
+    Food updatedFood = foodService.update(id, foodDetails, userId);
     return ResponseEntity.ok(updatedFood);
   }
 
   // DELETEリクエスト (http://localhost:8080/api/foods/{id})
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteFood(@PathVariable Long id) {
-    foodService.delete(id);
+  public ResponseEntity<Void> deleteFood(
+      @PathVariable Long id,
+      @RequestAttribute("userId") Long userId) {
+    foodService.delete(id, userId);
     return ResponseEntity.noContent().build();// 成功時、204 No Contentを返す
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Food> getFood(@PathVariable Long id) {
-    // Serviceを呼び出すだけ！ Controllerは食品を探すロジックを知らない。
-    Food food = foodService.findById(id);
+  public ResponseEntity<Food> getFood(
+      @PathVariable Long id,
+      @RequestAttribute("userId") Long userId) {
+    // Serviceを呼び出すだけ, Controllerは食品を探すロジックを知らない。
+    Food food = foodService.findByIdAndUserId(id, userId);
     // Serviceが正常にfoodを返してくれたら、それをOKで包んで返すだけ。
     return ResponseEntity.ok(food);
   }
