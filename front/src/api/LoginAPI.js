@@ -66,6 +66,7 @@ import { ROUTES } from "const";
   };
 
   // パスワード再設定
+  // 今回は実装しない予定
   export const handleResetPassword = async (event) => {
     event.preventDefault();
     setError("");
@@ -102,12 +103,3 @@ import { ROUTES } from "const";
       console.error(err);
     }
   };
-
-
-  
-  // useEffect(() => {
-  // データベースからの数量取得
-  // fetch('api/userData')
-  // .then(res => re.json())
-  // .then(data => setUser(user));
-  // },[])
