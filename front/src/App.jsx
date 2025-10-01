@@ -6,9 +6,14 @@ import { FoodEdit } from "pages/FoodEdit";
 import { Login } from "pages/Login";
 import { Register } from "pages/Register";
 import { CATEGORY_ICONS, ROUTES } from "./const";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import mockFoodData from "./data/MockFoodData";
-import { fetchFoods } from "./api/FoodlistApi";
+import {
+  createFood,
+  deleteFood,
+  editFood,
+  fetchFoods,
+} from "./api/FoodListApi";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -16,40 +21,79 @@ function App() {
   const [foods, setFoods] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState(""); // 検索キーワード用のstate
   const [categorizeKeyword, setCategorizeKeyword] = useState("");
+  const [error, setError] = useState(null);
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
 
-  useEffect(() => {
-    const loadFoods = async () => {
-      if (currentUser) {
+  const loadFoods = useCallback(async () => {
+    if (currentUser) {
+      try {
         const foodsData = await fetchFoods(currentUser.userId);
         setFoods(foodsData);
-      } else {
-        setFoods([]); // ログアウト時などにリストをクリア
+      } catch (err) {
+        setError("データの取得に失敗しました。");
+        console.error(err);
       }
-    };
-
-    loadFoods();
+    } else {
+      setFoods([]); // ログアウト時などにリストをクリア
+    }
   }, [currentUser]); // currentUserが変わるたびに実行
 
-  // 食品追加処理
-  const handleAddFood = (newFood) => {
-    const newId = Date.now(); // タイムスタンプをユニークIDとして使用
-    const icon = CATEGORY_ICONS[newFood.category] || CATEGORY_ICONS["その他"];
-    const foodWithDetails = { ...newFood, id: newId, icon };
-    setFoods([...foods, foodWithDetails]);
+  useEffect(() => {
+    loadFoods();
+  }, [loadFoods]);
+
+  /**
+   * 食品を登録する関数
+   * @param {object} newFood - FoodFormから渡される新しい食品データ
+   */
+  const handleAddFood = async (newFood) => {
+    if (!currentUser) return;
+    try {
+      // 1. APIを呼び出して食品を登録する
+      await createFood(newFood, currentUser.userId);
+      // 2. 登録が成功したら、食品一覧を再フェッチして画面を更新する
+      await loadFoods();
+    } catch (err) {
+      setError("食品の登録に失敗しました。");
+      console.error(err);
+    }
   };
 
   // 食品編集処理
-  const handleEditFood = (editedFood) => {
-    setFoods(
-      foods.map((food) => (food.id === editedFood.id ? editedFood : food))
-    );
+  /**
+   * 既存の食品を更新
+   * @param {number | string} foodId - 更新する食品のID
+   * @param {object} foodData - 更新する食品のデータ
+   * @param {string} userId
+   */
+  const handleEditFood = async (editedFood) => {
+    if (!currentUser) return;
+    try {
+      await editFood(editedFood.id, editedFood, currentUser.userId);
+
+      await loadFoods();
+    } catch (err) {
+      setError("食品の編集に失敗しました。");
+      console.error(err);
+    }
   };
 
   // 食品削除処理
-  const handleDeleteFood = (foodId) => {
-    setFoods(foods.filter((food) => food.id !== foodId));
+  /**
+   * @param {number | string} foodId
+   * @param {string} userId
+   */
+  const handleDeleteFood = async (foodId) => {
+    if (!currentUser) return;
+    try {
+      await deleteFood(foodId, currentUser.userId);
+
+      await loadFoods();
+    } catch (err) {
+      setError("食品の削除に失敗しました。");
+      console.error(err);
+    }
   };
 
   // 検索キーワードを更新する処理
@@ -71,7 +115,7 @@ function App() {
 
   const filteredFoods = (foods || []).filter((food) => {
     // searchKeywordが空文字列の場合は、無条件でtrueを返し、全ての食品を表示する
-    if (searchKeyword === '') {
+    if (searchKeyword === "") {
       return true;
     }
     // searchKeywordが何か入力されている場合のみ、名前での絞り込みを行う
@@ -96,7 +140,8 @@ function App() {
           }
         />
         <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.REGISTER} element={<Register />} /> {/* 新規登録ページのルートを追加 */}
+        <Route path={ROUTES.REGISTER} element={<Register />} />{" "}
+        {/* 新規登録ページのルートを追加 */}
       </Routes>
 
       {/* 以下はモーダル表示用のルーティング */}
