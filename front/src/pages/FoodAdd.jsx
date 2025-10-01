@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import classes from "./styles/FoodEdit.module.css"; // CSSモジュールをインポート
 import { useNavigate } from "react-router-dom";
+import { CATEGORY_ICONS } from "../const";
 
 export function FoodAdd({ onAdd }) {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export function FoodAdd({ onAdd }) {
     category: "",
     quantity: "",
     unit: "",
-    expiryDate: "",
+    expirationDate: "",
     memo: "",
     icon: "",
   });
@@ -28,18 +29,17 @@ export function FoodAdd({ onAdd }) {
 
   const submitAddFood = async (event) => {
     event.preventDefault();
-    // const icon = CATEGORY_ICONS[addFood.category] || CATEGORY_ICONS["その他"];
-    // const foodWithDetails = { ...newFood, id: newId, icon };
-    // setFoods([...foods, foodWithDetails]);
-    if (!formData) return;
-    await onAdd(formData);
+    const icon = CATEGORY_ICONS[formData.category] || CATEGORY_ICONS["その他"];
+    const newFood = { ...formData, icon };
+    if (!newFood) return;
+    await onAdd(newFood);
     setIsVisible(false);
     setFormData({
       name: "",
       category: "",
       quantity: "",
       unit: "",
-      expiryDate: "",
+      expirationDate: "",
       memo: "",
       icon: "",
     });
@@ -56,9 +56,7 @@ export function FoodAdd({ onAdd }) {
     <div>
       <div id="addFoodPopup" className={classes.popupOverlay}>
         <div
-          className={`${classes.popupContent} ${isVisible ? classes.visible : ""
-            }`}
-        >
+          className={`${classes.popupContent} ${isVisible ? classes.visible : ""}`}>
           <div className={classes.header}>
             <div className={classes.headerTitleGroup}>
               <div className={classes.headerIcon}>
@@ -171,17 +169,17 @@ export function FoodAdd({ onAdd }) {
 
             {/* 賞味期限 */}
             <div>
-              <label htmlFor="addExpiryDate" className={classes.formLabel}>
+              <label htmlFor="addExpirationDate" className={classes.formLabel}>
                 賞味期限 <span className={classes.requiredMark}>*</span>
               </label>
               <input
                 type="date"
-                id="addExpiryDate"
-                name="expiryDate"
+                id="addExpirationDate"
+                name="expirationDate"
                 className={classes.formInput}
                 required
                 min={new Date().toISOString().split("T")[0]}
-                value={formData.expiryDate}
+                value={formData.expirationDate}
                 onChange={handleInputChange}
               />
             </div>
