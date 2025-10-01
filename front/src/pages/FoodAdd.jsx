@@ -26,10 +26,23 @@ export function FoodAdd({ onAdd }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitAddFood = (event) => {
+  const submitAddFood = async (event) => {
     event.preventDefault();
-    onAdd(formData);
+    // const icon = CATEGORY_ICONS[addFood.category] || CATEGORY_ICONS["その他"];
+    // const foodWithDetails = { ...newFood, id: newId, icon };
+    // setFoods([...foods, foodWithDetails]);
+    if (!formData) return;
+    await onAdd(formData);
     setIsVisible(false);
+    setFormData({
+      name: "",
+      category: "",
+      quantity: "",
+      unit: "",
+      expiryDate: "",
+      memo: "",
+      icon: "",
+    });
     setTimeout(() => navigate(-1), 300);
   };
 
@@ -43,9 +56,8 @@ export function FoodAdd({ onAdd }) {
     <div>
       <div id="addFoodPopup" className={classes.popupOverlay}>
         <div
-          className={`${classes.popupContent} ${
-            isVisible ? classes.visible : ""
-          }`}
+          className={`${classes.popupContent} ${isVisible ? classes.visible : ""
+            }`}
         >
           <div className={classes.header}>
             <div className={classes.headerTitleGroup}>

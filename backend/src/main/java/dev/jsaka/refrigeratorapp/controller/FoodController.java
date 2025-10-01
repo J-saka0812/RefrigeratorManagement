@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.jsaka.refrigeratorapp.dto.FoodCreateRequestDto;
+import dev.jsaka.refrigeratorapp.dto.FoodResponseDto;
+import dev.jsaka.refrigeratorapp.dto.FoodUpdateRequestDto;
 import dev.jsaka.refrigeratorapp.entity.Food;
 import dev.jsaka.refrigeratorapp.service.FoodService;
 
@@ -39,22 +43,22 @@ public class FoodController {
   // POSTリクエスト (http://localhost:8080/api/foods) に対応
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED) // 成功した場合、HTTPステータスコード201 (Created) を返す
-  public ResponseEntity<Food> createFood(
-      @RequestBody Food food, // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
-      @RequestAttribute("userId") Long userId) {
+  public ResponseEntity<Food> createFood(@RequestBody FoodCreateRequestDto foodDto, @RequestHeader("X-User-Id") Long userId) {
+    // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
     // リクエストのJSONボディをFoodオブジェクトに変換し、データベースに保存
-    Food createdFood = foodService.create(food, userId);
+    // ServiceにDTOを渡して、内部でエンティティへの変換と保存を行ってもらう
+        Food createdFood = foodService.create(foodDto, userId);
     // 201 Createdステータスで返すのがRESTfulな作法
     return new ResponseEntity<>(createdFood, HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<Food> updateFood(
-      @PathVariable Long id,
-      @RequestBody Food foodDetails,
-      @RequestAttribute("userId") Long userId) {
-    // 受け取ったデータでそのまま保存（上書き）
-    Food updatedFood = foodService.update(id, foodDetails, userId);
+      @PathVariable Long id, // ★URLからIDを受け取る
+        @RequestBody FoodUpdateRequestDto foodDto, // ★ボディから更新データを受け取る
+        @RequestHeader("X-User-Id") Long userId) {
+
+    Food updatedFood = foodService.update(id, foodDto, userId);
     return ResponseEntity.ok(updatedFood);
   }
 
@@ -68,12 +72,14 @@ public class FoodController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Food> getFood(
+  public ResponseEntity<FoodResponseDto> getFood(
       @PathVariable Long id,
       @RequestAttribute("userId") Long userId) {
     // Serviceを呼び出すだけ, Controllerは食品を探すロジックを知らない。
     Food food = foodService.findByIdAndUserId(id, userId);
+
+    FoodResponseDto responseDto = new FoodResponseDto(food);
     // Serviceが正常にfoodを返してくれたら、それをOKで包んで返すだけ。
-    return ResponseEntity.ok(food);
+    return ResponseEntity.ok(responseDto);
   }
 }

@@ -19,7 +19,7 @@ export function Home({ foods, onDelete, onSearch, onCategorize }) {
     }
   }, [currentUser, navigate]);
 
-  console.log('【Home.jsx】受け取ったProps:', foods);
+  // console.log('【Home.jsx】受け取ったProps:', foods);
 
   // currentUser がない場合は、早期リターンして何も表示しない
   if (!currentUser) {

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import dev.jsaka.refrigeratorapp.dto.FoodCreateRequestDto;
+import dev.jsaka.refrigeratorapp.dto.FoodUpdateRequestDto;
 import dev.jsaka.refrigeratorapp.entity.Food;
 import dev.jsaka.refrigeratorapp.exception.ResourceNotFoundException;
 import dev.jsaka.refrigeratorapp.repository.FoodRepository;
@@ -17,27 +19,42 @@ public class FoodService {
     this.foodRepository = foodRepository;
   }
 
-// ストリームを使って特定のuserIdを持つものだけをフィルタリングする
+  // ストリームを使って特定のuserIdを持つものだけをフィルタリングする
   public List<Food> findAllByUserId(Long userId) {
     return foodRepository.findAll().stream()
         .filter(food -> food.getUserId().equals(userId))
         .toList();
   }
 
-  public Food create(Food food, Long userId) {
-    food.setId(null);
-    food.setUserId(userId); // 誰の食品かを記録する
-    return foodRepository.save(food);
+  public Food create(FoodCreateRequestDto foodDto, Long userId) {
+    // 1. 新しい Food エンティティのインスタンスを作成する
+    Food newFood = new Food();
+
+    // 2. DTO（申込書）からデータを取り出して、エンティティ（台帳）に詰め替える
+    newFood.setName(foodDto.getName());
+    newFood.setCategory(foodDto.getCategory());
+    newFood.setIcon(foodDto.getIcon());
+    newFood.setUnit(foodDto.getUnit());
+    newFood.setQuantity(foodDto.getQuantity());
+    newFood.setExpirationDate(foodDto.getExpirationDate());
+    newFood.setUserId(userId); // ヘッダーから受け取ったuserIdも設定
+
+    // 3. 詰め替えたエンティティをDBに保存する
+    return foodRepository.save(newFood);
   }
 
-  public Food update(Long id, Food foodDetails, Long userId) {
+  public Food update(Long id, FoodUpdateRequestDto foodDto, Long userId) {
     // まず、更新対象のFoodがデータベースに存在するかを確認する(userId指定)
-    Food existingFood = findByIdAndUserId(id, userId);
+    // (このメソッドの内部で、存在チェックと権限チェックが完了する)
+    Food existingFood = this.findByIdAndUserId(id, userId);
 
-    // 存在するFoodエンティティの各フィールドを、リクエストされた内容で更新する
-    existingFood.setName(foodDetails.getName());
-    existingFood.setExpirationDate(foodDetails.getExpirationDate());
-    existingFood.setQuantity(foodDetails.getQuantity());
+    // 2. DTOのデータを使って、既存エンティティのフィールドを上書きする
+    existingFood.setName(foodDto.getName());
+    existingFood.setCategory(foodDto.getCategory());
+    existingFood.setIcon(foodDto.getIcon());
+    existingFood.setUnit(foodDto.getUnit());
+    existingFood.setQuantity(foodDto.getQuantity());
+    existingFood.setExpirationDate(foodDto.getExpirationDate());
 
     // 更新したFoodエンティティを保存する
     return foodRepository.save(existingFood);
