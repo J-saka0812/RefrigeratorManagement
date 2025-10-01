@@ -12,7 +12,7 @@ public class FoodResponseDto {
   private String icon;
   private String unit;
   private LocalDate expirationDate;
-  private Integer quantity;
+  private Double quantity;
 
   public FoodResponseDto(Food food) {
     this.id = food.getId();
@@ -48,7 +48,7 @@ public class FoodResponseDto {
     return expirationDate;
   }
 
-  public Integer getQuantity() {
+  public Double getQuantity() {
     return quantity;
   }
 }

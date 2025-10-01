@@ -3,9 +3,9 @@ import classes from "./styles/FoodListItem.module.css";
 
 export function FoodListItem({ food, onEdit, onDelete }) {
   
-  const calculateDaysLeft = (expiryDate) => {
+  const calculateDaysLeft = (expirationDate) => {
     const today = new Date();
-    const expiry = new Date(expiryDate);
+    const expiry = new Date(expirationDate);
     // 時刻をリセットして日付のみで比較
     today.setHours(0, 0, 0, 0);
     expiry.setHours(0, 0, 0, 0);
@@ -14,7 +14,7 @@ export function FoodListItem({ food, onEdit, onDelete }) {
     return diffDays;
   };
 
-  const daysLeft = calculateDaysLeft(food.expiryDate);
+  const daysLeft = calculateDaysLeft(food.expirationDate);
 
   return (
     <div>
@@ -38,7 +38,7 @@ export function FoodListItem({ food, onEdit, onDelete }) {
                 {food.unit}
               </p>
               <p className="text-sm text-green-600 font-medium">
-                {`賞味期限: ${food.expiryDate} (あと ${daysLeft}日)`}
+                {`賞味期限: ${food.expirationDate} (あと ${daysLeft}日)`}
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import classes from "./styles/FoodEdit.module.css"; // CSSモジュールをインポート
 import { useLocation, useNavigate } from "react-router-dom";
 import { CategoryFilter } from "component/CategoryFilter";
+import { CATEGORY_ICONS } from "../const";
 
 export function FoodEdit({ onEdit }) {
   const location = useLocation();
@@ -16,7 +17,7 @@ export function FoodEdit({ onEdit }) {
     category: "",
     quantity: "",
     unit: "",
-    expiryDate: "",
+    expirationDate: "",
     memo: "",
   });
 
@@ -29,15 +30,16 @@ export function FoodEdit({ onEdit }) {
         category: food.category || "",
         quantity: food.quantity || "",
         unit: food.unit || "",
-        expiryDate: food.expiryDate
-          ? new Date(food.expiryDate).toISOString().split("T")[0]
+        expirationDate: food.expirationDate
+          ? new Date(food.expirationDate).toISOString().split("T")[0]
           : "",
         memo: food.memo || "",
       });
-    }
-    // わずかな遅延を入れてから表示アニメーションを開始
-    const timer = setTimeout(() => setIsVisible(true), 10);
-    return () => clearTimeout(timer);
+
+      // わずかな遅延を入れてから表示アニメーションを開始
+      const timer = setTimeout(() => setIsVisible(true), 10);
+      return () => clearTimeout(timer);
+    } 
   }, [food]);
 
   const handleInputChange = (event) => {
@@ -45,15 +47,27 @@ export function FoodEdit({ onEdit }) {
     // そこに入力した内容value(formDataのname: やcategory: に入っている値)
     // setFormDataはFoodEditに遷移したときにfoodとしてstateで渡されているのでそこに入っていた値
     const { name, value } = event.target;
-    const today = new Date().toISOString().split()
+    const today = new Date().toISOString().split();
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const submitEditFood = (event) => {
     event.preventDefault();
-    
-    onEdit(formData); // App.jsxのhandleEditFoodを呼び出す
+
+    const icon = CATEGORY_ICONS[formData.category] || CATEGORY_ICONS["その他"];
+    const editedFood = { ...formData, icon };
+    if (!editedFood) return;
+    onEdit(editedFood); // App.jsxのhandleEditFoodを呼び出す
     setIsVisible(false); // 閉じるアニメーションを開始
+    setFormData({
+      name: "",
+      category: "",
+      quantity: "",
+      unit: "",
+      expirationDate: "",
+      memo: "",
+      icon: "",
+    });
     setTimeout(() => navigate(-1), 300); // アニメーション後に遷移
   };
 
@@ -62,15 +76,14 @@ export function FoodEdit({ onEdit }) {
     setTimeout(() => navigate(-1), 300); // アニメーション後に遷移
   };
 
-  if (!food) {
-    // food データがない場合はエラーメッセージなどを表示
-    return <div>食品データが見つかりません。</div>;
-  }
-
   return (
     <div>
       <div id="editFoodPopup" className={classes.popupOverlay}>
-        <div className={`${classes.popupContent} ${isVisible ? classes.visible : ""}`}>
+        <div
+          className={`${classes.popupContent} ${
+            isVisible ? classes.visible : ""
+          }`}
+        >
           {/* ヘッダー */}
           <div className={classes.header}>
             <div className={classes.headerTitleGroup}>
@@ -85,7 +98,11 @@ export function FoodEdit({ onEdit }) {
           </div>
 
           {/* フォーム */}
-          <form id="editFoodForm" onSubmit={submitEditFood} className={classes.form}>
+          <form
+            id="editFoodForm"
+            onSubmit={submitEditFood}
+            className={classes.form}
+          >
             {/* 食品名 */}
             <div>
               <label htmlFor="editFoodName" className={classes.formLabel}>
@@ -133,8 +150,7 @@ export function FoodEdit({ onEdit }) {
                 <option value="その他">📦 その他</option>
               </select>
             </div>
-
-{/* TODO: 数量と単位をコンポーネント化 */}
+            
             {/* 数量と単位 */}
             <div className={classes.inputGrid}>
               <div>
@@ -182,17 +198,17 @@ export function FoodEdit({ onEdit }) {
 
             {/* 賞味期限 */}
             <div>
-              <label htmlFor="editExpiryDate" className={classes.formLabel}>
+              <label htmlFor="editExpirationDate" className={classes.formLabel}>
                 賞味期限 <span className={classes.requiredMark}>*</span>
               </label>
               <input
                 type="date"
-                id="editExpiryDate"
-                name="expiryDate"
+                id="editExpirationDate"
+                name="expirationDate"
                 className={classes.formInput}
                 required
                 min={new Date().toISOString().split("T")[0]}
-                value={formData.expiryDate}
+                value={formData.expirationDate}
                 onChange={handleInputChange}
               />
             </div>
@@ -222,7 +238,10 @@ export function FoodEdit({ onEdit }) {
               >
                 キャンセル
               </button>
-              <button type="submit" className={`${classes.button} ${classes.buttonSubmit}`}>
+              <button
+                type="submit"
+                className={`${classes.button} ${classes.buttonSubmit}`}
+              >
                 更新する
               </button>
             </div>
