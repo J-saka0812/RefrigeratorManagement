@@ -39,7 +39,18 @@ Content-Type: application/json
 X-User-Id: {{userId2}}
 
 {
-    "name": "ユーザー2のトマト",
+    "name": "ユーザー2のマシュマロ",
+    "expirationDate": "2025-10-12",
+    "quantity": 5
+}
+
+### user3が食品を登録する
+POST {{baseUrl}}
+Content-Type: application/json
+X-User-Id: {{userId3}}
+
+{
+    "name": "ユーザー3のマシュマロ",
     "expirationDate": "2025-10-12",
     "quantity": 5
 }
