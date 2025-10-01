@@ -18,19 +18,19 @@ public class Food {
     private Long id;// int型だとnullではなく0になるのでラッパークラスのLongでnull参照できるようにしている
     // 一度intで作成しリソースの枯渇が発生するとその後の改修が困難になるため、大規模ECサイト等で主キーを設定する場合は、Long型がベストプラクティス
     private String name;
-
     private LocalDate expirationDate;
-
     private Integer quantity;
-
+    private String icon;
+    private String unit;
+    private String category;
     @Column(nullable = false) // DB側でNOT NULL制約を付ける
     private Long userId;
 
-    public Long getUserId(){
+    public Long getUserId() {
         return userId;
     }
 
-    public Long setUserId(Long userId){
+    public Long setUserId(Long userId) {
         return this.userId = userId;
     }
 
@@ -68,5 +68,29 @@ public class Food {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
