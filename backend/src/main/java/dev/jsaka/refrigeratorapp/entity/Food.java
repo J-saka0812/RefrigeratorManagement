@@ -19,7 +19,7 @@ public class Food {
     // 一度intで作成しリソースの枯渇が発生するとその後の改修が困難になるため、大規模ECサイト等で主キーを設定する場合は、Long型がベストプラクティス
     private String name;
     private LocalDate expirationDate;
-    private Integer quantity;
+    private Double quantity;
     private String icon;
     private String unit;
     private String category;
@@ -62,11 +62,11 @@ public class Food {
         this.expirationDate = expirationDate;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 

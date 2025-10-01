@@ -9,7 +9,7 @@ public class FoodCreateRequestDto {
     private String icon;
     private String unit;
     private LocalDate expirationDate;
-    private Integer quantity;
+    private Double quantity;
 
     public FoodCreateRequestDto() {
     }
@@ -30,11 +30,11 @@ public class FoodCreateRequestDto {
         this.expirationDate = expirationDate;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
