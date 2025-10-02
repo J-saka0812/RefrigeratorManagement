@@ -36,7 +36,8 @@
 
 .inputField {
   width: 100%;
-  padding: 0.75rem 1rem;
+  /* アイコンと重ならないように左パディングを調整 */
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
   border: 2px solid #bbf7d0;
   border-radius: 0.75rem;
   transition: all 200ms;
