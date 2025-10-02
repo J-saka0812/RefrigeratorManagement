@@ -24,7 +24,6 @@ export function FoodList({ foods, onEdit, onDelete }) {
 
       <div id="foodList" className={classes.itemContainer}>
         {/* <!-- 食品アイテム1 --> */}
-        {/* <FoodListItem food={foods} onEdit={onEdit} onDelete={onDelete} /> */}
         {foods.map((food) => (
           <FoodListItem key={food.id} food={food} onEdit={onEdit} onDelete={onDelete} />
         ))}

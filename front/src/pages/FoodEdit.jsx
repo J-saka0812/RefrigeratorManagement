@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import classes from "./styles/FoodEdit.module.css"; // CSSモジュールをインポート
 import { useLocation, useNavigate } from "react-router-dom";
-import { CategoryFilter } from "component/CategoryFilter";
 import { CATEGORY_ICONS } from "../const";
 
 export function FoodEdit({ onEdit }) {
@@ -47,7 +46,6 @@ export function FoodEdit({ onEdit }) {
     // そこに入力した内容value(formDataのname: やcategory: に入っている値)
     // setFormDataはFoodEditに遷移したときにfoodとしてstateで渡されているのでそこに入っていた値
     const { name, value } = event.target;
-    const today = new Date().toISOString().split();
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -127,12 +125,6 @@ export function FoodEdit({ onEdit }) {
               <label htmlFor="editCategory" className={classes.formLabel}>
                 カテゴリ <span className={classes.requiredMark}>*</span>
               </label>
-              {/* TODO: カテゴリフィルターのコンポーネントを、流用できるように修正 */}
-              {/* <CategoryFilter
-              value={formData.category}
-              onChange={handleInputChange}
-              className={classes.formSelect}
-              /> */}
               <select
                 id="editCategory"
                 name="category"

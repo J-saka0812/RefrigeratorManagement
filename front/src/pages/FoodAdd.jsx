@@ -51,7 +51,7 @@ export function FoodAdd({ onAdd }) {
     setTimeout(() => navigate(-1), 300);
   };
 
-  // TODO: 各機能をコンポーネント化＆FoodEditも同様の仕様に変更する
+
   return (
     <div>
       <div id="addFoodPopup" className={classes.popupOverlay}>
@@ -92,12 +92,6 @@ export function FoodAdd({ onAdd }) {
                 onChange={handleInputChange}
               />
             </div>
-            {/* TODO: カテゴリフィルターのコンポーネントを、流用できるように修正 */}
-            {/* <CategoryFilter
-              value={formData.category}
-              onChange={handleInputChange}
-              className={classes.formSelect}
-              /> */}
             {/* カテゴリ */}
             <div>
               <label htmlFor="addCategory" className={classes.formLabel}>
@@ -120,7 +114,6 @@ export function FoodAdd({ onAdd }) {
                 <option value="その他">📦 その他</option>
               </select>
             </div>
-            {/* TODO: 数量と単位をコンポーネント化 */}
             {/* 数量と単位 */}
             <div className={classes.inputGrid}>
               <div>

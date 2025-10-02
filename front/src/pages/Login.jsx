@@ -235,7 +235,7 @@ export function Login() {
           message: "メールアドレスまたはパスワードが正しくありません。",
         }));
 
-        // 2秒後にエラー表示を消す
+        // 1.5秒後にエラー表示を消す
         setTimeout(() => {
           setViewState((prev) => ({
             ...prev,
