@@ -5,9 +5,8 @@ import { FoodAdd } from "pages/FoodAdd";
 import { FoodEdit } from "pages/FoodEdit";
 import { Login } from "pages/Login";
 import { Register } from "pages/Register";
-import { CATEGORY_ICONS, ROUTES } from "./const";
+import { ROUTES } from "./const";
 import { useCallback, useEffect, useState } from "react";
-import mockFoodData from "./data/MockFoodData";
 import {
   createFood,
   deleteFood,
@@ -19,9 +18,15 @@ import { useAuth } from "./context/AuthContext";
 function App() {
   const { currentUser } = useAuth(); // AuthContextからcurrentUserを取得
   const [foods, setFoods] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState(""); // 検索キーワード用のstate
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [categorizeKeyword, setCategorizeKeyword] = useState("");
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({
+    //StatsCard用オブジェクト
+    total: 0,
+    expiringSoon: 0,
+    expired: 0,
+  });
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
 
@@ -33,6 +38,11 @@ function App() {
       } catch (err) {
         setError("データの取得に失敗しました。");
         console.error(err);
+        return (
+          <MessageField icon="❌" className={errorMessage}>
+            {error}
+          </MessageField>
+        );
       }
     } else {
       setFoods([]); // ログアウト時などにリストをクリア
@@ -57,6 +67,11 @@ function App() {
     } catch (err) {
       setError("食品の登録に失敗しました。");
       console.error(err);
+      return (
+        <MessageField icon="❌" className={errorMessage}>
+          {error}
+        </MessageField>
+      );
     }
   };
 
@@ -76,6 +91,11 @@ function App() {
     } catch (err) {
       setError("食品の編集に失敗しました。");
       console.error(err);
+      return (
+        <MessageField icon="❌" className={errorMessage}>
+          {error}
+        </MessageField>
+      );
     }
   };
 
@@ -93,6 +113,11 @@ function App() {
     } catch (err) {
       setError("食品の削除に失敗しました。");
       console.error(err);
+      return (
+        <MessageField icon="❌" className={errorMessage}>
+          {error}
+        </MessageField>
+      );
     }
   };
 
@@ -106,22 +131,52 @@ function App() {
     setCategorizeKeyword(category);
   };
 
-  // 表示する食品をフィルタリング
-  // const filteredFoods = (foods || []).filter((food) => {
-  //   const matchSearch = food && food.name && food.name.includes(searchKeyword);
-  //   const matchCategorize = food && food.category && food.category.includes(categorizeKeyword);
-  //   return matchSearch && matchCategorize;
-  // });
-
   const filteredFoods = (foods || []).filter((food) => {
-    // searchKeywordが空文字列の場合は、無条件でtrueを返し、全ての食品を表示する
-    if (searchKeyword === "") {
+    // searchKeywordが空文字かつcategorizeKeywordが空文字の場合は、無条件でtrueを返し、全ての食品を表示する
+    if (searchKeyword === "" && categorizeKeyword === "") {
       return true;
     }
     // searchKeywordが何か入力されている場合のみ、名前での絞り込みを行う
     // toLowerCase()を使うことで、大文字・小文字を区別しない検索になる
-    return food.name.toLowerCase().includes(searchKeyword.toLowerCase());
+    const matchSearch =
+      food && food.name.toLowerCase().includes(searchKeyword.toLowerCase());
+    const matchCategorize =
+      food &&
+      food.category.toLowerCase().includes(categorizeKeyword.toLowerCase());
+    return matchSearch && matchCategorize;
   });
+
+  // statsCard用データ取得用のuseEffect
+  useEffect(() => {
+    if (!currentUser || !foods || foods.length === 0) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let expiringSoonCount = 0;
+    let expiredCount = 0;
+
+    foods.forEach((food) => {
+      const expiry = new Date(food.expirationDate);
+      expiry.setHours(0, 0, 0, 0);
+
+      const diffTime = expiry.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 2 && diffDays > 0) {
+        expiringSoonCount++;
+      } else if (diffDays <= 0) {
+        expiredCount++;
+      }
+    });
+
+    // 一度だけstateを更新
+    setStats({
+      total: foods.length,
+      expiringSoon: expiringSoonCount,
+      expired: expiredCount,
+    });
+  }, [foods, currentUser]); // 依存配列はfoodsとcurrentUserのみ
 
   return (
     <>
@@ -136,6 +191,7 @@ function App() {
               onDelete={handleDeleteFood}
               onSearch={handleSearchFood}
               onCategorize={handleCategorizeFood}
+              stats={stats}
             />
           }
         />

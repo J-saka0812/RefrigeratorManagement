@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "../const";
 import { useAuth } from "../context/AuthContext";
 
-export function Home({ foods, onDelete, onSearch, onCategorize }) {
+export function Home({ foods, onDelete, onSearch, onCategorize, stats }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser } = useAuth();
@@ -67,7 +67,7 @@ export function Home({ foods, onDelete, onSearch, onCategorize }) {
   return (
     <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-3">
       <Header user={currentUser} onClick={() => navigate(ROUTES.LOGIN)} />
-      <StatsCards />
+      <StatsCards stats={stats} />
       <SearchBarContainer
         onAdd={handleAdd}
         onSearch={handleSearch}

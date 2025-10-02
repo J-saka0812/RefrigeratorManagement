@@ -40,3 +40,9 @@
 .read-the-docs {
   color: #888;
 }
+
+.errorMessage {
+  background-image: linear-gradient(to right, #ffedd5, #fed7aa);
+  border-color: #fdba74;
+  color: #9a3412;
+}
