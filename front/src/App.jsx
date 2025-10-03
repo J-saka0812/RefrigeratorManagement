@@ -60,18 +60,15 @@ function App() {
   const handleAddFood = async (newFood) => {
     if (!currentUser) return;
     try {
-      // 1. APIを呼び出して食品を登録する
+      // ★成功時に、以前のエラーメッセージをクリアする
+      setError(null);
       await createFood(newFood, currentUser.userId);
-      // 2. 登録が成功したら、食品一覧を再フェッチして画面を更新する
       await loadFoods();
     } catch (err) {
+      // ★役割：エラーステートを更新するだけ
       setError("食品の登録に失敗しました。");
       console.error(err);
-      return (
-        <MessageField icon="❌" className={errorMessage}>
-          {error}
-        </MessageField>
-      );
+      // ここでJSXは返さない！
     }
   };
 
@@ -85,17 +82,12 @@ function App() {
   const handleEditFood = async (editedFood) => {
     if (!currentUser) return;
     try {
+      setError(null);
       await editFood(editedFood.id, editedFood, currentUser.userId);
-
       await loadFoods();
     } catch (err) {
       setError("食品の編集に失敗しました。");
       console.error(err);
-      return (
-        <MessageField icon="❌" className={errorMessage}>
-          {error}
-        </MessageField>
-      );
     }
   };
 
@@ -107,17 +99,12 @@ function App() {
   const handleDeleteFood = async (foodId) => {
     if (!currentUser) return;
     try {
+      setError(null);
       await deleteFood(foodId, currentUser.userId);
-
       await loadFoods();
     } catch (err) {
       setError("食品の削除に失敗しました。");
       console.error(err);
-      return (
-        <MessageField icon="❌" className={errorMessage}>
-          {error}
-        </MessageField>
-      );
     }
   };
 
@@ -148,7 +135,14 @@ function App() {
 
   // statsCard用データ取得用のuseEffect
   useEffect(() => {
-    if (!currentUser || !foods || foods.length === 0) return;
+    if (!currentUser) {
+      setStats({ total: 0, expiringSoon: 0, expired: 0 });
+      return;
+    }
+    if (!foods || foods.length === 0) {
+      setStats({ total: 0, expiringSoon: 0, expired: 0 });
+      return;
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -213,6 +207,15 @@ function App() {
           />
         </Routes>
       )}
+
+      <div className="app-container">
+        {/* ★役割：エラーステートを監視し、値があれば表示する */}
+        {error && (
+          <MessageField icon="❌" className="error-message">
+            {error}
+          </MessageField>
+        )}
+      </div>
     </>
   );
 }

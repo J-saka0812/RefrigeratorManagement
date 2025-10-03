@@ -13,6 +13,7 @@ public class FoodResponseDto {
   private String unit;
   private LocalDate expirationDate;
   private Double quantity;
+  private String memo;
 
   public FoodResponseDto(Food food) {
     this.id = food.getId();
@@ -22,6 +23,7 @@ public class FoodResponseDto {
     this.unit = food.getUnit();
     this.expirationDate = food.getExpirationDate();
     this.quantity = food.getQuantity();
+    this.memo = food.getMemo();
   };
 
   public Long getId() {
@@ -50,5 +52,9 @@ public class FoodResponseDto {
 
   public Double getQuantity() {
     return quantity;
+  }
+
+  public String getMemo() {
+    return memo;
   }
 }

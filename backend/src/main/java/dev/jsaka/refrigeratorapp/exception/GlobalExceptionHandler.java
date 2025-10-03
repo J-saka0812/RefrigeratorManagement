@@ -1,11 +1,13 @@
 package dev.jsaka.refrigeratorapp.exception;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -47,5 +49,26 @@ public class GlobalExceptionHandler {
     body.put("path", request.getDescription(false).replace("uri=", ""));
 
     return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  /**
+   * @Valid バリデーション違反のハンドリング
+   */
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex){
+
+    Map<String, String> errors = new HashMap<>();
+
+    // 例外オブジェクトから、全てのエラー情報を取得し、ループ処理
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            // エラーが発生したフィールド名と、DTOに定義したエラーメッセージを取得
+            String fieldName = error.getField();
+            String errorMessage = error.getDefaultMessage();
+            // Mapに格納
+            errors.put(fieldName, errorMessage);
+        });
+
+        // 400 Bad Request ステータスで、エラー情報をJSON形式で返す
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 }

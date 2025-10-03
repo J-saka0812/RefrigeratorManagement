@@ -37,6 +37,7 @@ public class FoodService {
     newFood.setUnit(foodDto.getUnit());
     newFood.setQuantity(foodDto.getQuantity());
     newFood.setExpirationDate(foodDto.getExpirationDate());
+    newFood.setMemo(foodDto.getMemo());
     newFood.setUserId(userId); // ヘッダーから受け取ったuserIdも設定
 
     // 3. 詰め替えたエンティティをDBに保存する
@@ -55,6 +56,7 @@ public class FoodService {
     existingFood.setUnit(foodDto.getUnit());
     existingFood.setQuantity(foodDto.getQuantity());
     existingFood.setExpirationDate(foodDto.getExpirationDate());
+    existingFood.setMemo(foodDto.getMemo());
 
     // 更新したFoodエンティティを保存する
     return foodRepository.save(existingFood);

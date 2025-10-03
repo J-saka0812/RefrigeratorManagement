@@ -22,6 +22,7 @@ import dev.jsaka.refrigeratorapp.dto.FoodResponseDto;
 import dev.jsaka.refrigeratorapp.dto.FoodUpdateRequestDto;
 import dev.jsaka.refrigeratorapp.entity.Food;
 import dev.jsaka.refrigeratorapp.service.FoodService;
+import jakarta.validation.Valid;
 
 // @RestControllerが付いたクラスのメソッドがオブジェクトを返すと、内蔵されているJacksonというライブラリが、自動的にそれをJSON形式の文字列に変換して、HTTPレスポンスとして返してくれる
 @RestController // このクラス内のすべてのメソッドのURLの前に /api/foods が自動的に付与
@@ -29,6 +30,7 @@ import dev.jsaka.refrigeratorapp.service.FoodService;
 public class FoodController {
   private final FoodService foodService;
 
+// TODO: バリデーションルールの変更
   @Autowired // Springがアプリケーションを起動する際に、自動的に、事前に作成しておいたFoodRepositoryを実装
   public FoodController(FoodService foodService) {
     this.foodService = foodService;
@@ -43,7 +45,7 @@ public class FoodController {
   // POSTリクエスト (http://localhost:8080/api/foods) に対応
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED) // 成功した場合、HTTPステータスコード201 (Created) を返す
-  public ResponseEntity<Food> createFood(@RequestBody FoodCreateRequestDto foodDto, @RequestHeader("X-User-Id") Long userId) {
+  public ResponseEntity<Food> createFood(@Valid @RequestBody FoodCreateRequestDto foodDto, @RequestHeader("X-User-Id") Long userId) {
     // @RequestBody: フロントエンドから送られてくるJSON形式のデータを、自動的にFoodクラスのオブジェクトに変換
     // リクエストのJSONボディをFoodオブジェクトに変換し、データベースに保存
     // ServiceにDTOを渡して、内部でエンティティへの変換と保存を行ってもらう
@@ -55,7 +57,7 @@ public class FoodController {
   @PutMapping("/{id}")
   public ResponseEntity<Food> updateFood(
       @PathVariable Long id, // ★URLからIDを受け取る
-        @RequestBody FoodUpdateRequestDto foodDto, // ★ボディから更新データを受け取る
+        @Valid @RequestBody FoodUpdateRequestDto foodDto, // ★ボディから更新データを受け取る
         @RequestHeader("X-User-Id") Long userId) {
 
     Food updatedFood = foodService.update(id, foodDto, userId);

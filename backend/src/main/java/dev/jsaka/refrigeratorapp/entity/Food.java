@@ -23,6 +23,7 @@ public class Food {
     private String icon;
     private String unit;
     private String category;
+    private String memo;
     @Column(nullable = false) // DB側でNOT NULL制約を付ける
     private Long userId;
 
@@ -92,5 +93,13 @@ public class Food {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }
