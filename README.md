@@ -19,6 +19,7 @@ React を使用したフロントエンドの構築と、Spring Boot を使用�
 ◆ 公開 URL: https://refrigerator-management-front-publi.vercel.app/
 
 アプリケーション全体の公開は、AWSにて実施いたします。
+現在公開中の物は、フロントエンドのみとなりますので、再ログイン後の食品情報は初期状態に戻る仕様になっております。
 
 ◆ スクリーンショット
 
