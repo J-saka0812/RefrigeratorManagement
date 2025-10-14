@@ -30,7 +30,6 @@ import jakarta.validation.Valid;
 public class FoodController {
   private final FoodService foodService;
 
-  @Autowired // Springがアプリケーションを起動する際に、自動的に、事前に作成しておいたFoodRepositoryを実装
   public FoodController(FoodService foodService) {
     this.foodService = foodService;
   }
