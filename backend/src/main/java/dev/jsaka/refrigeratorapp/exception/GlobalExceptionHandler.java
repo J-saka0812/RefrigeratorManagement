@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +16,8 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice // このクラスがアプリケーション全体の例外を処理することを示す
 public class GlobalExceptionHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   // ResourceNotFoundExceptionが投げられた時に、このメソッドが呼ばれる
   @ExceptionHandler(ResourceNotFoundException.class)
@@ -39,7 +43,7 @@ public class GlobalExceptionHandler {
       Exception ex, WebRequest request) {
 
     // サーバー内部のエラーなので、詳細なメッセージはログに出力する
-    ex.printStackTrace();
+    log.error("An unexpected internal server error occurred", ex);
 
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("timestamp", LocalDateTime.now());
