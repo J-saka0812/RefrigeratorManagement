@@ -6,7 +6,6 @@ import { ROUTES } from "const";
     event.preventDefault();
     setError("");
     setErrors([]);
-// TODO: コンポーネント側とAPI側で処理を分離
 // Claud参照
     if (userPassword !== confirmPassword) {
       setError("パスワードが一致しません");

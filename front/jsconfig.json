@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "lib": ["es6", "dom"]
   },
   "include": ["src"]
 }

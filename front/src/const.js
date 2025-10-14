@@ -4,7 +4,6 @@ export const ROUTES = {
   REGISTER: "/register",
   FOOD_EDIT: "/food-edit",
   FOOD_ADD: "/food-add",
-  BASE_URL: "/api",
 };
 
 export const CATEGORY_ICONS = {
