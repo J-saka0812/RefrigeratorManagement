@@ -53,6 +53,7 @@ resource "cloudflare_record" "app" {
 
 # 4. VMware VMの定義
 # -------------------------------------------------
+
 resource "vsphere_virtual_machine" "server" {
   name             = "all-in-one-server"
   resource_pool_id = data.vsphere_resource_pool.pool.id
