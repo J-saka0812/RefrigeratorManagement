@@ -5,6 +5,10 @@ on:
     branches: ["main"]
 
 
+env:
+  AWS_REGION:
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
