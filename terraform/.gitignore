@@ -1,0 +1,20 @@
+# Local Terraform state
+terraform.tfstate
+terraform.tfstate.backup
+
+# .tfvars files should not be committed
+*.tfvars
+*.tfvars.json
+
+# Crash log files
+crash.log
+
+# Exclude all .tfstate files in subdirectories
+**/.tfstate
+**/.tfstate.backup
+
+# Terraform lock file
+.terraform.lock.hcl
+
+#Terraform working directory
+.terraform.lock.hcl
