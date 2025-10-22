@@ -1,0 +1,39 @@
+
+- name: Setup Application and Database Server on Ubuntu VM
+  hosts: vm_servers
+  become: yes #sudo権限
+  vars:
+    docker_compose_version: "v2.39.2" 
+
+  tasks:
+    - name: Update apt cache and upgrade packages
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+        autoremove: yes
+      tags: initial_setup
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+        state: present
+      tags: initial_setup
+
+    - name: Add Docker's officiak GPG key
+      ansible.builtin.apt_key:
+        url: https//download.docker.com/linux/ubuntu/gpg
+        state: present
+      tags: docker
+
+    - name: Add Docker apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu/gpg"
+        state: present
+      tags: docker
+
+    
