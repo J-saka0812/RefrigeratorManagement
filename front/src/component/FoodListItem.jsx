@@ -23,13 +23,13 @@ export function FoodListItem({ food, onEdit, onDelete }) {
         data-category={food.category}
         data-name={food.name}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="bg-gradient-to-br from-pink-200 to-rose-300 w-16 h-16 rounded-full flex items-center justify-center shadow-md">
               <span className="text-3xl">{food.icon}</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800">
                 {food.name}
               </h3>
               <p className="text-sm text-gray-600">{food.category}</p>
@@ -42,7 +42,7 @@ export function FoodListItem({ food, onEdit, onDelete }) {
               </p>
             </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0">
             <FunctionButton
               type="button"
               onClick={() => {

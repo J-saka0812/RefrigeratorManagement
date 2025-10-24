@@ -1,9 +1,30 @@
-.value-text {
-  font-size: 1.875rem; /* text-3xl */
-  line-height: 2.25rem; /* text-3xl のデフォルト line-height */
-  font-weight: 700; /* font-bold */
-  color: rgb(8, 162, 90);
+.value {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700;
+  color: #1f2937;
 }
+
+@media (min-width: 640px) {
+  .value {
+    font-size: 1.875rem; /* text-3xl */
+  }
+}
+
+.total .value {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.expiringSoon .value {
+  font-weight: 700;
+  color: #d97706;
+}
+
+.expired .value {
+  font-weight: 700;
+  color: #dc2626;
+}
+
 
 .icon-container {
   background-image: linear-gradient(
@@ -19,13 +40,6 @@
   justify-content: center; /* justify-center */
 }
 
-.value-text {
-  font-size: 1.875rem; /* text-3xl */
-  line-height: 2.25rem; /* text-3xl のデフォルト line-height */
-  font-weight: 700; /* font-bold */
-  color: #f97316; /* text-orange-500 */
-}
-
 .icon-container {
   background-image: linear-gradient(
     to bottom right,
@@ -38,13 +52,6 @@
   display: flex; /* flex */
   align-items: center; /* items-center */
   justify-content: center; /* justify-center */
-}
-
-.value-text {
-  font-size: 1.875rem; /* text-3xl */
-  line-height: 2.25rem; /* Tailwindのtext-3xlに対応 */
-  font-weight: 700; /* font-bold */
-  color: #ef4444; /* text-red-500 */
 }
 
 .icon-container {
