@@ -4,7 +4,7 @@ export function StatsCards({stats}) {
 
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-6 mt-5">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 mt-5">
       <StatsCard
         label="総食品数"
         value={stats.total}
