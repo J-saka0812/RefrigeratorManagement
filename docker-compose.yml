@@ -1,12 +1,11 @@
 services:
-  # 1. Spring Boot アプリケーションサービス
   app:
-    container_name: refrigerator-app # コンテナ名を指定
+    container_name: refrigerator-app
     build:
-      context: ./backend # Dockerfileがあるディレクトリを指定
+      context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080" # ホストの8080番ポートをコンテナの8080番ポートにマッピング
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
