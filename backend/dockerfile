@@ -23,9 +23,16 @@ FROM openjdk:17-jdk-slim
 # 作業ディレクトリを作成
 WORKDIR /app
 
-# ★★★ここが重要★★★
-# ステージ1(builder)でビルドされたjarファイルだけを、この新しいコンテナにコピーする
-COPY --from=builder /app/target/*.jar app.jar
+# wait-for-it.shの依存ツールをインストール
+RUN apt-get update && apt-get install -y dos2unix netcat
 
+COPY --from=builder /app/target/*.jar app.jar
+COPY wait-for-it.sh /wait-for-it.sh 
+
+# 改行コードをLFに変換し、実行権限を付与
+RUN dos2unix /wait-for-it.sh && chmod +x /wait-for-it.sh 
+
+# DBの準備が完了するまで待ってから、アプリケーションを起動する (フラグなしの正しい形式)
+ENTRYPOINT ["/wait-for-it.sh", "db", "3306", "--", "java", "-jar", "app.jar"]
 # コンテナ起動時にjarファイルを実行する
-ENTRYPOINT ["java","-jar","app.jar"]
+# ENTRYPOINT ["java","-jar","app.jar"]
