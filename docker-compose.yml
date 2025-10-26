@@ -1,19 +1,4 @@
 services:
-  app:
-    container_name: refrigerator-app
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/refrigerator_db?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=user
-      - SPRING_DATASOURCE_PASSWORD=password
-
   # 2. MySQL データベースサービス
   db:
     image: mysql:8.0
@@ -54,6 +39,21 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+
+  app:
+    container_name: refrigerator-app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/refrigerator_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
 
 volumes:
   mysql-data: # 名前付きボリュームの定義
