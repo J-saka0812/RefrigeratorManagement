@@ -34,10 +34,26 @@ services:
       - mysql-data:/var/lib/mysql
       # データを永続化するためのボリューム
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u$$MYSQL_USER",
+          "-p$$MYSQL_PASSWORD",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 volumes:
   mysql-data: # 名前付きボリュームの定義
