@@ -55,5 +55,15 @@ services:
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=password
 
+  frontend:
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app # ホットリロードのためにソースコードをマウント
+      - /app/node_modules # ホスト側のnode_modulesで上書きされないように
+    command: yarn dev --host
+    depends_on:
+      - app
+
 volumes:
   mysql-data: # 名前付きボリュームの定義
