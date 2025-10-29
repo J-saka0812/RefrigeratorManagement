@@ -1,101 +1,44 @@
-
-- name: Setup Application and Database Server on Ubuntu VM
-  hosts: vm_servers
-  become: yes #sudo権限
-  vars:
-    docker_compose_version: "v2.39.2" 
+---
+- name: Configure Ubuntu VM for Refrigerator App
+  hosts: vm_server
+  become: yes # これにより、root権限でコマンドを実行できるようになります (sudo)
+  gather_facts: yes # ホストの情報を収集します
 
   tasks:
-    - name: Update apt cache and upgrade packages
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: yes
-        upgrade: dist
-        autoremove: yes
-      tags: initial_setup
 
-    - name: Install required packages
+    - name: Install required packages for Docker
       ansible.builtin.apt:
-        name:
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
-          - python3-pip
+        name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
         state: present
-      tags: initial_setup
 
-    - name: Add Docker's official GPG key
+    - name: Add Docker GPG key
       ansible.builtin.apt_key:
-        url: https//download.docker.com/linux/ubuntu/gpg
+        url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-      tags: docker
 
     - name: Add Docker apt repository
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu/gpg"
+        repo: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
         state: present
-      tags: docker
+        filename: docker
 
     - name: Install Docker Engine
       ansible.builtin.apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-          - docker-buildx-plugin
-          - docker-compose-plugin # Docker Compose V2
+        name: ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-buildx-plugin', 'docker-compose-plugin']
         state: present
         update_cache: yes
-      tags: docker
-
-    - name: Ensure docker group exists
-      ansible.builtin.group:
-        name: docker
-        state: present
-      tags: docker
-
-    - name: Add remote user to docker group
-      ansible.builtin.user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
-      tags: docker
-
-    - name: Install Docker SDK for Python (for Docker modules)
-      ansible.builtin.pip:
-        name: docker
-        state: present
-      tags: docker
-
-    # ここにアプリケーションとDBのDocker ComposeファイルをVMにコピーし、実行するタスクを追加
-    - name: Create app directory
-      ansible.builtin.file:
-        path: /opt/my_app
-        state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0755'
-      tags: deploy_app
-
-    - name: Copy docker-compose.yml to remote host
-      ansible.builtin.copy:
-        src: ./docker-compose.yml # ローカルのdocker-compose.ymlのパス
-        dest: /opt/my_app/docker-compose.yml
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0644'
-      tags: deploy_app
-
-    - name: Start services with Docker Compose
-      community.docker.docker_compose: # `community.docker` コレクションが必要です
-        project_src: /opt/my_app
-        state: present # present で起動、absent で停止・削除
-        build: yes # イメージがない場合にビルドする
-      tags: deploy_app
 
     - name: Ensure Docker service is running and enabled
-      ansible.builtin.service:
+      ansible.builtin.systemd:
         name: docker
         state: started
         enabled: yes
-      tags: docker
+
+    - name: Add 'ubuntu' user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
