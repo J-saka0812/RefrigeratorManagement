@@ -6,12 +6,9 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0" # チルダを使うのが一般的
     }
-    vsphere = {
-      source  = "hashicorp/vsphere"
-      version = "~> 2.5"
-    }
+
     cloudflare = {
-      source  = "cloudflare/cloudflare" # ソースが変更されています
+      source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
   }
@@ -23,12 +20,7 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-provider "vsphere" {
-  user                 = var.vsphere_user
-  password             = var.vsphere_password
-  vsphere_server       = var.vsphere_server
-  allow_unverified_ssl = true
-}
+
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
@@ -54,19 +46,7 @@ resource "cloudflare_record" "app" {
 # 4. VMware VMの定義
 # -------------------------------------------------
 
-resource "vsphere_virtual_machine" "server" {
-  name             = "all-in-one-server"
-  resource_pool_id = data.vsphere_resource_pool.pool.id
-  datastore_id     = data.vsphere_datastore.datastore.id
 
-  num_cpus = 2
-  memory   = 4096
-  guest_id = "ubuntu64Guest"
-
-  network_interface {
-    network_id   = data.vsphere_network.network.id
-    adapter_type = "vmxnet3"
-  }
 
   disk {
     label = "disk0"
