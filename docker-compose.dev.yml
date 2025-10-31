@@ -1,0 +1,23 @@
+---
+version: '3.8'
+
+services:
+  db:
+    ports:
+      - "3306:3306"
+
+  qpp:
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app # バックエンドのホットリロード
+
+  frontend:
+    image: node:18-alpine
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node.modules # ホストPCのnode.modulesファイルで上書しないように
+    command: yarn dev --host # --host: コンテナは別環境になるため明示的に外部(ホストPC)からの接続を許可するためのもの
