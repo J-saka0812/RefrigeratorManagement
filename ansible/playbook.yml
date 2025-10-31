@@ -1,15 +1,15 @@
 ---
 - name: Configure Ubuntu VM for Refrigerator App
   hosts: vm_server
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
 
   tasks:
     - name: Update apt cache and install prerequisites
       ansible.builtin.apt: # `apt` を操作するためのモジュール
         name: ['ca-certificates', 'curl']
         state: present # もしインストールされていなければインストールし、既にインストールされていれば何もしない
-        update_cache: yes
+        update_cache: true
 
     - name: Download Docker install script
       ansible.builtin.get_url: # 指定したURLからファイルをダウンロードする
@@ -26,10 +26,10 @@
       ansible.builtin.systemd:
         name: docker #/usr/bin/Dockerのこと
         state: started #startにしないように
-        enabled: yes
+        enabled: true
 
     - name: Add 'jsaka' user to docker group
       ansible.builtin.user:
         name: jsaka #捜査対象のユーザーを決める
         groups: docker #所属するグループを決める
-        append: yes #グループの所属はappendにすること(state: presentだとそのグループにしか所属しなくなる→sudo使えない)
+        append: true #グループの所属はappendにすること(state: presentだとそのグループにしか所属しなくなる→sudo使えない)
