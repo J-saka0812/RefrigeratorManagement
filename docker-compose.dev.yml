@@ -14,7 +14,7 @@ services:
       - ./backend/src:/app/src
       - ./backend/pom.xml:/app/pom.xml
     # DockerfileのCMDを上書きし、DevToolsが変更を検知できるようにする
-    command: ["./wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
+    command: ["/wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
 
   frontend:
     image: node:18-alpine
@@ -24,4 +24,7 @@ services:
     volumes:
       - ./front:/app
       - /app/node.modules # ホストPCのnode.modulesファイルで上書しないように
-    command: yarn dev --host # --host: コンテナは別環境になるため明示的に外部(ホストPC)からの接続を許可するためのもの
+      
+      # corepackを有効にしてからyarnコマンドを実行
+    command: sh -c "corepack enable && yarn install && yarn dev --host"
+    # --host: コンテナは別環境になるため明示的に外部(ホストPC)からの接続を許可するためのもの
