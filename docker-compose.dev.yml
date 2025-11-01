@@ -19,7 +19,13 @@ services:
       - ./backend/wait-for-it.sh:/wait-for-it.sh # builder領域にwait-for-itがないためマウント
       - ./backend/pom.xml:/app/pom.xml
     # DockerfileのCMDを上書きし、DevToolsが変更を検知できるようにする
-    command: ["/wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
+    # command: ["/wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
+    command: > #デバッグ用にコマンド形式を変更
+      sh -c "
+      cat /wait-for-it.sh | tr -d '\r' > /tmp/wait-for-it.sh &&
+      chmod +x /tmp/wait-for-it.sh &&
+      /tmp/wait-for-it.sh db 3306 -- mvn spring-boot:run
+      " 
 
   frontend:
     image: node:18-alpine
