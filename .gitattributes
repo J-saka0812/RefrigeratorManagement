@@ -1,0 +1,2 @@
+*.sh text eol=lf
+; .sh: 拡張し.shに対して　text: テキストファイルとして扱う eol=lf: 改行コードをlfで統一
