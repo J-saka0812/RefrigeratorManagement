@@ -58,6 +58,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- 開発用依存関係 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <!-- 開発環境用の依存関係はdependenciesの最後に書くのがベター -->
+            <scope>runtime</scope>
+            <optional>true</optional>
+            <!-- 上記2行で本番環境下で影響を与えないようにしている -->
+        </dependency>
     </dependencies>
 
     <build>

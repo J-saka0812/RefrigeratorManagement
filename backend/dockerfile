@@ -33,6 +33,6 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN dos2unix /wait-for-it.sh && chmod +x /wait-for-it.sh 
 
 # DBの準備が完了するまで待ってから、アプリケーションを起動する (フラグなしの正しい形式)
-ENTRYPOINT ["/wait-for-it.sh", "db", "3306", "--", "java", "-jar", "app.jar"]
-# コンテナ起動時にjarファイルを実行する
-# ENTRYPOINT ["java","-jar","app.jar"]
+# Enttrypointやcmdの違いについてはNotion参照
+ENTRYPOINT ["/wait-for-it.sh", "db", "3306", "--"]
+CMD ["java", "-jar", "app.jar"]
