@@ -10,7 +10,11 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./backend:/app # バックエンドのホットリロード
+      # ディレクトリ全体ではなく、コンパイルが必要なソースコードのみをマウントする
+      - ./backend/src:/app/src
+      - ./backend/pom.xml:/app/pom.xml
+    # DockerfileのCMDを上書きし、DevToolsが変更を検知できるようにする
+    command: ["./wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
 
   front:
     image: node:18-alpine
