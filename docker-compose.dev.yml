@@ -12,12 +12,12 @@ services:
     volumes:
       - ./backend:/app # バックエンドのホットリロード
 
-  frontend:
+  front:
     image: node:18-alpine
     working_dir: /app
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - ./front:/app
       - /app/node.modules # ホストPCのnode.modulesファイルで上書しないように
     command: yarn dev --host # --host: コンテナは別環境になるため明示的に外部(ホストPC)からの接続を許可するためのもの
