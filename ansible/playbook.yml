@@ -7,7 +7,7 @@
   tasks:
     - name: Update apt cache and install prerequisites
       ansible.builtin.apt: # `apt` を操作するためのモジュール
-        name: ['ca-certificates', 'curl']
+        name: ['ca-certificates', 'curl'] # インストールしたいパッケージリスト
         state: present # もしインストールされていなければインストールし、既にインストールされていれば何もしない
         update_cache: true
 
@@ -33,3 +33,27 @@
         name: jsaka #捜査対象のユーザーを決める
         groups: docker #所属するグループを決める
         append: true #グループの所属はappendにすること(state: presentだとそのグループにしか所属しなくなる→sudo使えない)
+
+    - name: Create directory for the application on VM
+      ansible.builtin.file:
+        path: /home/jsaka/app # プロジェクト移行用のディレクトリを作成
+        state: directory
+        owner: jsaka
+        group: jsaka
+        mode: '0755'
+
+    - name: Copy application files to VM
+      ansible.builtin.copy:
+        src: ../ # プロジェクト全体をVM側にコピー
+        dest: //home/jsaka/app # コピー先
+        owner: jsaka
+        group: jsaka
+
+    - name: Build and run containers with docker-compose
+      community.docker.docker_compose: # docker-compose用のおまじない
+        project_src: //home/jsaka/app
+        file:
+          - docker-compose.yml
+          - docker-compose.prod.yml
+        build: true
+        state: present
