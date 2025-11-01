@@ -16,7 +16,7 @@ services:
     # DockerfileのCMDを上書きし、DevToolsが変更を検知できるようにする
     command: ["./wait-for-it.sh", "db", "3306", "--", "mvn", "spring-boot:run",]
 
-  front:
+  frontend:
     image: node:18-alpine
     working_dir: /app
     ports:
