@@ -19,6 +19,8 @@ services:
     ports:
       - "80:80" # フロントはnginxが立つのでポートはHTTPを許可する
     restart: always
+    depends_on:
+      - refrigerator-app
 
 volumes:
   mysql-data: # 名前付きボリュームの定義
