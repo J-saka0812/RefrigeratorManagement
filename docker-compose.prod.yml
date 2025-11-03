@@ -14,7 +14,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./front
       dockerfile: Dockerfile # Dockerfileにnginxで立つようになってるのでimage不要
     ports:
       - "80:80" # フロントはnginxが立つのでポートはHTTPを許可する
