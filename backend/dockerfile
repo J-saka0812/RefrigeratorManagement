@@ -2,6 +2,8 @@
 # MavenとJavaが使える公式イメージを「ビルダー」として使う
 FROM maven:3.8.4-openjdk-17 AS builder
 
+#netcatインストール
+RUN apt-get update && apt-get install -y netcat
 # 作業ディレクトリを作成
 WORKDIR /app
 
