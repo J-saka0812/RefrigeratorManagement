@@ -15,7 +15,7 @@ RUN yarn build
 FROM nginx:alpine
 
 # プロジェクト内のnginx.confを、コンテナ内のNginx設定ディレクトリにコピーする
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
 # ビルドステージで生成された静的ファイルをNginxのWebルートにコピー
 COPY --from=builder /app /usr/share/nginx/html
 
