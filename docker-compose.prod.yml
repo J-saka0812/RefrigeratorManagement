@@ -1,5 +1,5 @@
 ---
-version: '3.8' # バージョンを指定すること
+#バージョン指定はV2からは無視されるため記載不要
 services:
   # 2. MySQL データベースサービス
   db:
@@ -20,7 +20,7 @@ services:
       - "80:80" # フロントはnginxが立つのでポートはHTTPを許可する
     restart: always
     depends_on:
-      - refrigerator-app
+      - app
 
 volumes:
   mysql-data: # 名前付きボリュームの定義
