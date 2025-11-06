@@ -14,7 +14,9 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
-.yarn/*
+.yarn/unplugged
+.yarn/install-state.gz
+.yarn/build-state.yml
 !.vscode/extensions.json
 .idea
 .DS_Store
