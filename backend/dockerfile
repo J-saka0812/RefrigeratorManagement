@@ -20,7 +20,7 @@ RUN mvn package -DskipTests
 
 # --- ステージ2: 実行環境 ---
 # 実行に必要なJavaだけが入った軽量なイメージを使う
-FROM eclipse-temurin:17-jdk-slim
+FROM eclipse-temurin:17-jdk-alpine
 
 # 作業ディレクトリを作成
 WORKDIR /app
