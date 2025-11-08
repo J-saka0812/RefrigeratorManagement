@@ -33,14 +33,20 @@
   MySQL 8.0
 
 - **手順**
-  リポジトリのクローン:
+このプロジェクトのバックエンドをビルドするには、以下の環境が必要です。
 
-code
+*   **Java**: OpenJDK 17
+*   **Maven**: 3.8.x 以上
+
+### Ubuntu 22.04でのセットアップ例
 
 ```bash
-git clone https://your-repository-url.git
-cd your-repository-directory
-```
+# OpenJDK 17をインストール
+sudo apt update
+sudo apt install openjdk-17-jdk
+
+# Mavenをインストール
+sudo apt install maven
 
 - **データベースのセットアップ**:
   MySQL でアプリケーション用のデータベース（例: refrigerator_db）を作成します。
