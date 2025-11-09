@@ -30,7 +30,7 @@
 
     - name: Add 'jsaka' user to docker group
       ansible.builtin.user:
-        name: jsaka #捜査対象のユーザーを決める
+        name: jsaka #操作対象のユーザーを決める
         groups: docker #所属するグループを決める
         append: true #グループの所属はappendにすること(state: presentだとそのグループにしか所属しなくなる→sudo使えない)
 
