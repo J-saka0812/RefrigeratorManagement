@@ -26,7 +26,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # wait-for-it.shの依存ツールをインストール
-RUN apt-get update && apt-get install -y dos2unix netcat
+RUN apk update && apk add --no-cache bash dos2unix netcat-openbsd
 
 COPY --from=builder /app/target/*.jar app.jar
 COPY wait-for-it.sh /wait-for-it.sh 

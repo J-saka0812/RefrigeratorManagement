@@ -38,7 +38,7 @@ public class FoodController {
     // 自動的にSELECT * FROM foods; に相当するSQLが実行され、取得した全データがFoodオブジェクトのリスト(List<Food>)に入る
   }
 
-  // POSTリクエスト (http://localhost:8080/api/foods) に対応
+  // POSTリクエスト (http://api:8080/foods) に対応
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED) // 成功した場合、HTTPステータスコード201 (Created) を返す
   public ResponseEntity<Food> createFood(@Valid @RequestBody FoodCreateRequestDto foodDto,
