@@ -20,6 +20,7 @@ RUN mvn package -DskipTests
 
 # --- ステージ2: 実行環境 ---
 # 実行に必要なJavaだけが入った軽量なイメージを使う
+# Xからの情報だとalpine等の軽量イメージは本番環境ではあまり使用しないほうが良いらしい
 FROM eclipse-temurin:17-jdk-alpine
 
 # 作業ディレクトリを作成
