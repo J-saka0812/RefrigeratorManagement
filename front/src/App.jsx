@@ -12,7 +12,7 @@ import {
   deleteFood,
   editFood,
   fetchFoods,
-} from "./api/FoodListApi";
+} from "./api/FoodListApi.js";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
