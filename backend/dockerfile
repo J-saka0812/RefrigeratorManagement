@@ -21,22 +21,18 @@ RUN mvn package -DskipTests
 # --- ステージ2: 実行環境 ---
 # 実行に必要なJavaだけが入った軽量なイメージを使う
 # Xからの情報だとalpine等の軽量イメージは本番環境ではあまり使用しないほうが良いらしい
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 # 作業ディレクトリを作成
 WORKDIR /app
 
 # ミラーサイトを日本の理化学研究所のサーバーに変更
 # サーバー側でフロントインストールに対するレスポンスがない対策
-RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.riken.jp\/Linux/g' /etc/apk/repositories
-
-# `nslookup`: 名前解決ができてるか、`ping`: 疎通確認
-# デバッグ用コマンドで原因の切り分け
-RUN nslookup dl-cdn.alpinelinux.org
-RUN ping -c 3 dl-cdn.alpinelinux.org
+# RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.riken.jp\/Linux/g' /etc/apk/repositories
 
 # wait-for-it.shの依存ツールをインストール
-RUN apk update && apk add --no-cache bash dos2unix netcat-openbsd
+# RUN apk update && apk add --no-cache bash dos2unix netcat-openbsd
+RUN apt-get update && apt-get install -y --no-install-recommends bash dos2unix netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/target/*.jar app.jar
 COPY wait-for-it.sh /wait-for-it.sh 
