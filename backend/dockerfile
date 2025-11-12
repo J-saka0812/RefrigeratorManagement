@@ -28,7 +28,7 @@ WORKDIR /app
 
 # ミラーサイトを日本の理化学研究所のサーバーに変更
 # サーバー側でフロントインストールに対するレスポンスがない対策
-RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.riken.jp/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.riken.jp\/Linux/g' /etc/apk/repositories
 
 # `nslookup`: 名前解決ができてるか、`ping`: 疎通確認
 # デバッグ用コマンドで原因の切り分け
