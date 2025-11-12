@@ -23,5 +23,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Nginxがデフォルトで使用するポート80を公開
 EXPOSE 80
 
-# Nginxをフォアグラウンドで起動
-CMD ["nginx", "-g", "daemon off;"]
+# バックエンドの起動待機
+COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
+# バックエンド(app:8080)が立ち上がるまで待機してから nginx 起動
+ENTRYPOINT ["wait-for-it.sh", "app", "8080", "--", "nginx", "-g", "daemon off;"]
