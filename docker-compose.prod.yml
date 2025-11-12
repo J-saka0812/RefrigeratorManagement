@@ -6,11 +6,15 @@ services:
     expose:
       - "3306" # バックエンドとの疎通のため内部のみで開放(portsは厳禁)
     restart: always
+    networks:
+      - default
 
   app:
     expose:
       - "8080"
     restart: always
+    networks:
+      - default
 
   frontend:
     build:
@@ -21,6 +25,14 @@ services:
     restart: always
     depends_on:
       - app
+    networks:
+      - default
 
 volumes:
   mysql-data: # 名前付きボリュームの定義
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
