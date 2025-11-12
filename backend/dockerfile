@@ -30,6 +30,11 @@ WORKDIR /app
 # サーバー側でフロントインストールに対するレスポンスがない対策
 RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.riken.jp/g' /etc/apk/repositories
 
+# `nslookup`: 名前解決ができてるか、`ping`: 疎通確認
+# デバッグ用コマンドで原因の切り分け
+RUN nslookup dl-cdn.alpinelinux.org
+RUN ping -c 3 dl-cdn.alpinelinux.org
+
 # wait-for-it.shの依存ツールをインストール
 RUN apk update && apk add --no-cache bash dos2unix netcat-openbsd
 
