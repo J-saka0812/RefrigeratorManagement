@@ -15,6 +15,8 @@ RUN yarn build
 # 軽量版のalpineから標準版に変更
 FROM nginx:1.27-bookworm 
 
+# netcatのインストール
+RUN apt-get update && apt-get install -y --no-install-recommends netcat && rm -rf /var/lib/apt/lists/*
 # プロジェクト内のnginx.confを、コンテナ内のNginx設定ディレクトリにコピーする
 COPY ./nginx.conf /etc/nginx/nginx.conf
 # ビルドステージで生成された静的ファイルをNginxのWebルートにコピー
