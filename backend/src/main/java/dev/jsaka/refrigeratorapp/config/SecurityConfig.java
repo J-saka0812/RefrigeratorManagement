@@ -27,8 +27,9 @@ public class SecurityConfig {
 
                 // 認証フィルターの許可ルールなどを記述
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll() // 許可ルール(apiからのエンドポイント許可)
-                        .anyRequest().authenticated() // 上記以外は認証が必要
+                        // .requestMatchers("/api/**").permitAll() // 許可ルール(apiからのエンドポイント許可)
+                        // .anyRequest().authenticated() // 上記以外は認証が必要
+                        .anyRequest().permitAll() //APIのアクセス許可
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/**"));
@@ -40,13 +41,13 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 許可するフロントエンド
-        configuration.setAllowedOrigins(List.of("http://localhost"));
+        configuration.setAllowedOrigins(List.of("*"));
 
         // 許可するHTTPメソッド
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // 許可するHTTPヘッダー
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("*"));
 
         // クッキーの許可
         configuration.setAllowCredentials(true);
