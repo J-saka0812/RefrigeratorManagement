@@ -2,7 +2,6 @@ import axios from "axios";
 
 const API_BASE_URL = '/api';
 
-// test
 export const fetchFoods = async (userId) => {
   if (!userId) {
     console.error("ユーザーIDが指定されていません。");
