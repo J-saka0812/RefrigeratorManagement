@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-front/.yarn/install-state.gz
+
 node_modules
 dist
 dist-ssr
@@ -26,3 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.yarn
