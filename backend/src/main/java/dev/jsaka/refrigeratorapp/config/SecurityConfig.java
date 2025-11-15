@@ -50,7 +50,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("*"));
 
         // クッキーの許可
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
