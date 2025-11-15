@@ -43,6 +43,7 @@ services:
 
   frontend:
     container_name: refrigerator_frontend
+    build: ./front
     depends_on:
       - app
 

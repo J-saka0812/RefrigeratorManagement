@@ -1,5 +1,7 @@
 package dev.jsaka.refrigeratorapp.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,8 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -23,11 +23,13 @@ public class SecurityConfig {
                 // それを許可するためのルールを追加する必要がある
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable()) // CSRF保護を無効化する
 
                 // 認証フィルターの許可ルールなどを記述
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll() // 許可ルール(apiからのエンドポイント許可)
-                        .anyRequest().authenticated() // 上記以外は認証が必要
+                        // .requestMatchers("/api/**").permitAll() // 許可ルール(apiからのエンドポイント許可)
+                        // .anyRequest().authenticated() // 上記以外は認証が必要
+                        .anyRequest().permitAll() //APIのアクセス許可
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/**"));
@@ -39,16 +41,16 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 許可するフロントエンド
-        configuration.setAllowedOrigins(List.of("http://localhost"));
+        configuration.setAllowedOrigins(List.of("http://192.168.1.22"));
 
         // 許可するHTTPメソッド
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // 許可するHTTPヘッダー
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("*"));
 
         // クッキーの許可
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
