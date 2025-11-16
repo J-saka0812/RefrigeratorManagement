@@ -41,7 +41,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 許可するフロントエンド
-        configuration.setAllowedOrigins(List.of("http://192.168.1.22"));
+        configuration.setAllowedOrigins(List.of("*"));
 
         // 許可するHTTPメソッド
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
