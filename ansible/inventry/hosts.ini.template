@@ -1,0 +1,6 @@
+[vm_server]
+IP
+
+[all:vars]
+ansible_user=user
+# ansible_ssh_private_key_file=~/.ssh/id_rsa
