@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+
 node_modules
 dist
 dist-ssr
@@ -14,6 +15,9 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+.yarn/unplugged
+.yarn/install-state.gz
+.yarn/build-state.yml
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -22,3 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.yarn

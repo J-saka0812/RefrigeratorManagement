@@ -65,7 +65,7 @@ export function Home({ foods, onDelete, onSearch, onCategorize, stats }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-3">
+    <div className="bg-gradient-to-br from-green-400 via-emerald-300 to-teal-400 min-h-screen p-4 sm:p-6 lg:p-8">
       <Header user={currentUser} onClick={() => navigate(ROUTES.LOGIN)} />
       <StatsCards stats={stats} />
       <SearchBarContainer

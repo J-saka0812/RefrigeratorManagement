@@ -1,0 +1,38 @@
+---
+#バージョン指定はV2からは無視されるため記載不要
+services:
+  # 2. MySQL データベースサービス
+  db:
+    expose:
+      - "3306" # バックエンドとの疎通のため内部のみで開放(portsは厳禁)
+    restart: always
+    networks:
+      - default
+
+  app:
+    expose:
+      - "8080"
+    restart: always
+    networks:
+      - default
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile # Dockerfileにnginxで立つようになってるのでimage不要
+    ports:
+      - "80:80" # フロントはnginxが立つのでポートはHTTPを許可する
+    restart: always
+    depends_on:
+      - app
+    networks:
+      - default
+
+volumes:
+  mysql-data: # 名前付きボリュームの定義
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400

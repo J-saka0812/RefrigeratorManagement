@@ -7,7 +7,7 @@ export function StatsCard({ className, label, value, icon }) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-gray-600 text-sm font-medium">{label}</p>
-          <p className="value-text">{value}</p>
+          <p className="value">{value}</p>
         </div>
         <div className="icon-container">
           <span className="text-2xl">{icon}</span>
